@@ -1,0 +1,303 @@
+<title>מדד השחיקה הצוותי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: one narrow column, sea-state gauge on top, question cards below, result panel at the end */
+:root {
+  --bg: #eef4f6;
+  --surface: #ffffff;
+  --fg: #0f2433;
+  --muted: #557080;
+  --line: #d3e1e7;
+  --accent: #0e6e8c;
+  --accent-soft: #dcedf2;
+  --calm: #2f8f6b;
+  --waves: #c99a1e;
+  --rough: #d06a2c;
+  --storm: #b93a3a;
+  --font-display: "Secular One", "Assistant", system-ui, sans-serif;
+  --font-body: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1820; --surface: #10232e; --fg: #e4eff3; --muted: #8fabb8; --line: #1f3a48;
+    --accent: #5cc0de; --accent-soft: #143340;
+    --calm: #4fbf93; --waves: #e0b844; --rough: #ec8a4c; --storm: #ef6a6a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1820; --surface: #10232e; --fg: #e4eff3; --muted: #8fabb8; --line: #1f3a48;
+  --accent: #5cc0de; --accent-soft: #143340;
+  --calm: #4fbf93; --waves: #e0b844; --rough: #ec8a4c; --storm: #ef6a6a;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.wrap { max-width: 680px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 6vw, 2.6rem); }
+h2 { font-size: 1.45rem; }
+p { margin: 0; }
+.eyebrow { font-size: .8rem; letter-spacing: .06em; color: var(--accent); font-weight: 700; }
+.lede { color: var(--muted); max-width: 60ch; }
+header { display: grid; gap: 10px; }
+
+/* gauge */
+.gauge { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg); padding-block: 10px; display: grid; gap: 8px; }
+.gauge-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: .95rem; }
+.gauge-row strong { font-variant-numeric: tabular-nums; }
+.scale { position: relative; height: 12px; border-radius: 6px; display: grid; grid-template-columns: repeat(4, 1fr); overflow: hidden; }
+.scale span:nth-child(1) { background: var(--calm); }
+.scale span:nth-child(2) { background: var(--waves); }
+.scale span:nth-child(3) { background: var(--rough); }
+.scale span:nth-child(4) { background: var(--storm); }
+.marker { position: absolute; top: -5px; width: 4px; height: 22px; background: var(--fg); border-radius: 2px; transition: inset-inline-start .35s ease; }
+.scale-wrap { position: relative; padding-block: 5px; }
+.scale-labels { display: grid; grid-template-columns: repeat(4, 1fr); font-size: .78rem; color: var(--muted); text-align: center; }
+
+/* questions */
+.dim { display: grid; gap: 12px; }
+.dim-head { display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.dim-head .tag { font-size: .8rem; color: var(--muted); }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; }
+.q legend { font-weight: 600; padding: 0; margin-bottom: 10px; }
+.q fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.opts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.opts label { position: relative; }
+.opts input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opts span { display: grid; place-items: center; min-height: 48px; padding: 6px 4px; text-align: center; font-size: .82rem; line-height: 1.2; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); cursor: pointer; transition: background .15s, border-color .15s; }
+.opts input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 700; }
+.opts input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 460px) { .opts span { font-size: .74rem; min-height: 54px; } }
+
+/* result */
+.result { background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 14px; }
+.result[data-band="calm"] { border-color: var(--calm); }
+.result[data-band="waves"] { border-color: var(--waves); }
+.result[data-band="rough"] { border-color: var(--rough); }
+.result[data-band="storm"] { border-color: var(--storm); }
+.big { font-family: var(--font-display); font-size: 3rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.big small { font-size: 1.1rem; color: var(--muted); }
+.band-name { font-family: var(--font-display); font-size: 1.5rem; }
+.bars { display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 7.5em 1fr 3em; align-items: center; gap: 10px; font-size: .92rem; }
+.bar .track { height: 8px; background: var(--accent-soft); border-radius: 4px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .35s ease; }
+.bar .num { font-variant-numeric: tabular-nums; color: var(--muted); text-align: start; }
+.tip { background: var(--accent-soft); border-radius: 10px; padding: 14px; display: grid; gap: 4px; }
+.cta { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; }
+.msg { font-family: var(--font-body); background: var(--bg); border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; user-select: all; }
+button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 12px 18px; background: var(--accent); color: var(--surface); cursor: pointer; justify-self: start; }
+button:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.note { font-size: .82rem; color: var(--muted); }
+.pending { color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap" dir="rtl" lang="he">
+  <header>
+    <div class="eyebrow">למנהלים ולאנשי HR · 10 שאלות · 4 דקות</div>
+    <h1>מדד השחיקה הצוותי</h1>
+    <p class="lede">חשבו על הצוות שלכם בחודש האחרון וסמנו כמה כל משפט נכון לגביו. בסוף תקבלו מצב ים, את הממד שהכי לוחץ, וצעד אחד לעשות כבר השבוע.</p>
+  </header>
+
+  <div class="gauge" aria-live="polite">
+    <div class="gauge-row">
+      <span>מצב הים: <strong id="gBand">ממתין לתשובות</strong></span>
+      <span><strong id="gCount">0</strong> מתוך 10 · ציון <strong id="gScore">0</strong>/40</span>
+    </div>
+    <div class="scale-wrap">
+      <div class="scale" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="marker" id="marker" style="inset-inline-start:0%"></div>
+    </div>
+    <div class="scale-labels"><span>מים רגועים</span><span>גלים ראשונים</span><span>ים סוער</span><span>סערה</span></div>
+  </div>
+
+  <form id="quiz" novalidate></form>
+
+  <section class="result" id="result" aria-live="polite">
+    <p class="pending" id="pending">ענו על כל 10 השאלות כדי לראות את התוצאה המלאה. הציון מתעדכן בזמן אמת בסרגל למעלה.</p>
+    <div id="full" hidden>
+      <div style="display:grid;gap:14px">
+        <div class="eyebrow">התוצאה שלכם</div>
+        <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+          <div class="big"><span id="rScore">0</span><small> / 40</small></div>
+          <div class="band-name" id="rBand"></div>
+        </div>
+        <p id="rText"></p>
+        <div class="bars" id="rBars"></div>
+        <div class="tip">
+          <strong id="rTipTitle"></strong>
+          <span id="rTip"></span>
+        </div>
+        <div class="cta">
+          <h3>רוצים לדעת מה עושים עם זה?</h3>
+          <p>שלחו לי את ההודעה הזו בלינקדאין או באינסטגרם (<span style="user-select:all">@yoav_yosha</span>), ואחזור אליכם עם 3 צעדים שמותאמים לתוצאה של הצוות שלכם.</p>
+          <div class="msg" id="rMsg"></div>
+          <div class="actions">
+            <button type="button" id="copyBtn">העתקת ההודעה</button>
+            <button type="button" class="ghost" id="resetBtn">התחלה מחדש</button>
+          </div>
+          <span class="note" id="copyNote" aria-live="polite"></span>
+        </div>
+      </div>
+    </div>
+    <p class="note">זהו כלי מודעות לצוותים, לא אבחון קליני ולא שאלון מחקרי מתוקף. אם מישהו בצוות במצוקה, הפנו אותו לגורם מקצועי. נבנה על ידי יואב יושע · חוסן ו-Wellness לארגונים.</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  var OPTS = ["אף פעם", "לעיתים רחוקות", "לפעמים", "לעיתים קרובות", "כמעט תמיד"];
+  var DIMS = [
+    { key: "load", name: "עומס", tag: "כמה העבודה גולשת לחיים",
+      tipTitle: "הצעד לשבוע הזה: שעת שקט צוותית",
+      tip: "קבעו יחד כלל אחד: בלי הודעות עבודה אחרי 20:00 למשך שבועיים, כולל המנהלים. בסוף השבועיים שאלו את הצוות מה השתנה.",
+      qs: ["אנשים בצוות עונים למיילים ולהודעות אחרי 21:00 או בסופי שבוע.",
+           "משימות דחופות דוחקות שוב ושוב את העבודה החשובה באמת."] },
+    { key: "recovery", name: "התאוששות", tag: "האם יש זמן לחזור לעצמך",
+      tipTitle: "הצעד לשבוע הזה: התאוששות ביומן",
+      tip: "אחרי כל שיא (השקה, סגירת רבעון, חזרה ממילואים) שימו ביומן יום או חצי יום מופחת עומס. מתכננים אותו מראש, לא \"כשיהיה זמן\".",
+      qs: ["אנשים לא מנצלים את ימי החופש שלהם, או \"עובדים קצת\" גם בחופש.",
+           "אחרי תקופת לחץ חוזרים ישר לקצב מלא, בלי שום הפוגה."] },
+    { key: "managers", name: "מנהלים", tag: "מי מחזיק את המחזיקים",
+      tipTitle: "הצעד לשבוע הזה: לבדוק את המנהלים",
+      tip: "שאלו כל מנהל בצוות שאלה אחת: \"מי מחזיק אותך?\". 15 דקות בשבוע של שיחה אישית עם המנהל שלו שוות יותר מעוד סדנה לכל החברה.",
+      qs: ["המנהלים הישירים בצוות נראים עייפים או מוצפים בעצמם.",
+           "למנהלים אין זמן לשיחות אישיות עם העובדים שלהם."] },
+    { key: "connection", name: "חיבור", tag: "האם מותר להגיד \"קשה לי\"",
+      tipTitle: "הצעד לשבוע הזה: סבב של 3 דקות",
+      tip: "פתחו כל ישיבת צוות בסבב קצר: מספר מ-1 עד 10 ומילה אחת שמתארת את השבוע. בלי לפתור ובלי לנתח. רק לשמוע.",
+      qs: ["כל אחד עובד לבד: פחות שיחות מסדרון, פחות צחוק, פחות \"בוא נחשוב יחד\".",
+           "עובדים לא מרגישים בנוח להגיד \"קשה לי\" או \"אני לא עומד בזה\"."] },
+    { key: "exit", name: "סימני עזיבה", tag: "מה כבר רואים בשטח",
+      tipTitle: "הצעד לשבוע הזה: להסתכל על המספרים",
+      tip: "השוו את ימי המחלה הקצרים (יום-יומיים) ב-3 החודשים האחרונים לאותה תקופה אשתקד, ושבו לשיחה אישית עם 2 האנשים שהכי חשוב לכם לשמור.",
+      qs: ["יש עלייה בימי מחלה קצרים, באיחורים או בהיעדרויות.",
+           "אנשים טובים מדברים או מתנהגים כמו מי שכבר מסתכל החוצה."] }
+  ];
+  var BANDS = [
+    { key: "calm", max: 10, name: "מים רגועים",
+      text: "הצוות במצב טוב. יש עומס, אבל יש גם התאוששות וחיבור. המשימה עכשיו היא לשמור על זה כשהלחץ יעלה, ולא לחכות לגל הבא." },
+    { key: "waves", max: 20, name: "גלים ראשונים",
+      text: "יש סימנים מוקדמים. מבחוץ הכל עובד, אבל הצוות מתחיל לשלם על זה מהמילואים של עצמו. זה השלב הכי זול לטפל בו." },
+    { key: "rough", max: 30, name: "ים סוער",
+      text: "שחיקה פעילה. אנשים מחזיקים, אבל במחיר. בלי שינוי בעבודה עצמה, השלב הבא הוא ימי מחלה ועזיבות של אנשים שקשה להחליף." },
+    { key: "storm", max: 40, name: "סערה",
+      text: "הצוות על הקצה. זה כבר לא עניין של הטבה או סדנה. צריך לעצור, למדוד מה בדיוק שוחק, ולבנות תוכנית עם המנהלים. עכשיו." }
+  ];
+
+  var form = document.getElementById("quiz");
+  var qIndex = 0;
+  DIMS.forEach(function (d) {
+    var sec = document.createElement("section");
+    sec.className = "dim";
+    var head = document.createElement("div");
+    head.className = "dim-head";
+    var h = document.createElement("h2"); h.textContent = d.name;
+    var t = document.createElement("span"); t.className = "tag"; t.textContent = d.tag;
+    head.appendChild(h); head.appendChild(t); sec.appendChild(head);
+    d.qs.forEach(function (text) {
+      qIndex++;
+      var id = "q" + qIndex;
+      var box = document.createElement("div"); box.className = "q";
+      var fs = document.createElement("fieldset");
+      var lg = document.createElement("legend"); lg.textContent = qIndex + ". " + text;
+      fs.appendChild(lg);
+      var opts = document.createElement("div"); opts.className = "opts";
+      OPTS.forEach(function (label, v) {
+        var l = document.createElement("label");
+        var inp = document.createElement("input");
+        inp.type = "radio"; inp.name = id; inp.value = v; inp.id = id + "_" + v;
+        inp.dataset.dim = d.key;
+        var s = document.createElement("span"); s.textContent = label;
+        l.appendChild(inp); l.appendChild(s); opts.appendChild(l);
+      });
+      fs.appendChild(opts); box.appendChild(fs); sec.appendChild(box);
+    });
+    form.appendChild(sec);
+  });
+  form.style.display = "grid"; form.style.gap = "28px";
+
+  function bandFor(score) {
+    for (var i = 0; i < BANDS.length; i++) if (score <= BANDS[i].max) return BANDS[i];
+    return BANDS[BANDS.length - 1];
+  }
+
+  function compute() {
+    var total = 0, answered = 0, dims = {};
+    DIMS.forEach(function (d) { dims[d.key] = 0; });
+    for (var i = 1; i <= 10; i++) {
+      var c = form.querySelector('input[name="q' + i + '"]:checked');
+      if (c) { answered++; var v = +c.value; total += v; dims[c.dataset.dim] += v; }
+    }
+    return { total: total, answered: answered, dims: dims };
+  }
+
+  function render() {
+    var r = compute();
+    document.getElementById("gCount").textContent = r.answered;
+    document.getElementById("gScore").textContent = r.total;
+    var pct = Math.min(100, (r.total / 40) * 100);
+    document.getElementById("marker").style.insetInlineStart = "calc(" + pct + "% - 2px)";
+    var band = bandFor(r.total);
+    document.getElementById("gBand").textContent = r.answered ? band.name : "ממתין לתשובות";
+
+    var done = r.answered === 10;
+    document.getElementById("pending").hidden = done;
+    document.getElementById("full").hidden = !done;
+    var res = document.getElementById("result");
+    if (!done) { res.removeAttribute("data-band"); return; }
+    res.setAttribute("data-band", band.key);
+
+    document.getElementById("rScore").textContent = r.total;
+    document.getElementById("rBand").textContent = band.name;
+    document.getElementById("rText").textContent = band.text;
+
+    var top = DIMS[0];
+    var bars = document.getElementById("rBars");
+    bars.textContent = "";
+    DIMS.forEach(function (d) {
+      if (r.dims[d.key] > r.dims[top.key]) top = d;
+      var row = document.createElement("div"); row.className = "bar";
+      var n = document.createElement("span"); n.textContent = d.name;
+      var tr = document.createElement("div"); tr.className = "track";
+      var f = document.createElement("div"); f.className = "fill"; f.style.width = (r.dims[d.key] / 8 * 100) + "%";
+      tr.appendChild(f);
+      var num = document.createElement("span"); num.className = "num"; num.textContent = r.dims[d.key] + "/8";
+      row.appendChild(n); row.appendChild(tr); row.appendChild(num);
+      bars.appendChild(row);
+    });
+    document.getElementById("rTipTitle").textContent = top.tipTitle + " (" + top.name + ")";
+    document.getElementById("rTip").textContent = top.tip;
+    document.getElementById("rMsg").textContent =
+      "היי יואב, מילאתי את מדד השחיקה הצוותי. הציון שלנו: " + r.total + "/40 (" + band.name + "). הממד הכי לוחץ: " + top.name + ". אשמח ל-3 הצעדים.";
+  }
+
+  form.addEventListener("change", render);
+  form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    var text = document.getElementById("rMsg").textContent;
+    var note = document.getElementById("copyNote");
+    function fallback() {
+      var range = document.createRange();
+      range.selectNodeContents(document.getElementById("rMsg"));
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      note.textContent = "ההודעה מסומנת. העתיקו אותה ידנית.";
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () { note.textContent = "ההודעה הועתקה."; }, fallback);
+    } catch (e) { fallback(); }
+  });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    form.reset(); document.getElementById("copyNote").textContent = ""; render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  render();
+})();
+</script>
