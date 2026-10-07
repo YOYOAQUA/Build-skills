@@ -1,0 +1,195 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Assistant:wght@400;600;700&display=swap">
+<style>#ybi{--bg:#eef4f6;--sf:#fff;--fg:#0f2433;--mu:#557080;--ln:#d3e1e7;--ac:#0e6e8c;--as:#dcedf2;--calm:#2f8f6b;--waves:#c99a1e;--rough:#d06a2c;--storm:#b93a3a;background:var(--bg);color:var(--fg);font-family:Assistant,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.6;direction:rtl;text-align:right}#ybi *{box-sizing:border-box}#ybi [hidden]{display:none!important}#ybi .wrap{max-width:680px;margin:0 auto;padding:28px 16px 56px;display:grid;gap:28px}#ybi h1,#ybi h2,#ybi h3{font-family:"Secular One",Assistant,system-ui,sans-serif;font-weight:400;margin:0;line-height:1.2;color:var(--fg)}#ybi h1{font-size:clamp(2rem,6vw,2.6rem)}#ybi h2{font-size:1.45rem}#ybi h3{font-size:1.2rem}#ybi p{margin:0}#ybi .eyebrow{font-size:.8rem;letter-spacing:.06em;color:var(--ac);font-weight:700}#ybi .lede{color:var(--mu)}#ybi header{display:grid;gap:10px}#ybi .gauge{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0;display:grid;gap:8px}#ybi .gauge-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.95rem}#ybi .scale-wrap{position:relative;padding:5px 0}#ybi .scale{height:12px;border-radius:6px;display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}#ybi .scale span:nth-child(1){background:var(--calm)}#ybi .scale span:nth-child(2){background:var(--waves)}#ybi .scale span:nth-child(3){background:var(--rough)}#ybi .scale span:nth-child(4){background:var(--storm)}#ybi .marker{position:absolute;top:0;width:4px;height:22px;background:var(--fg);border-radius:2px;transition:right .35s}#ybi .scale-labels{display:grid;grid-template-columns:repeat(4,1fr);font-size:.78rem;color:var(--mu);text-align:center}#ybi form{display:grid;gap:28px}#ybi .dim{display:grid;gap:12px}#ybi .dim-head{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--ln);padding-bottom:6px}#ybi .tag{font-size:.8rem;color:var(--mu)}#ybi .q{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:16px}#ybi fieldset{border:0;margin:0;padding:0;min-width:0}#ybi legend{font-weight:600;padding:0;margin-bottom:10px;color:var(--fg)}#ybi .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}#ybi .opts label{position:relative;display:block;margin:0}#ybi .opts input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}#ybi .opts span{display:grid;place-items:center;min-height:48px;padding:6px 4px;text-align:center;font-size:.82rem;line-height:1.2;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--fg)}#ybi .opts input:checked+span{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}#ybi .opts input:focus-visible+span{outline:3px solid var(--ac);outline-offset:2px}@media(max-width:460px){#ybi .opts span{font-size:.74rem;min-height:54px}}#ybi .result{background:var(--sf);border:2px solid var(--ln);border-radius:14px;padding:22px;display:grid;gap:14px}#ybi .result[data-band=calm]{border-color:var(--calm)}#ybi .result[data-band=waves]{border-color:var(--waves)}#ybi .result[data-band=rough]{border-color:var(--rough)}#ybi .result[data-band=storm]{border-color:var(--storm)}#ybi .big{font-family:"Secular One",Assistant,sans-serif;font-size:3rem;line-height:1}#ybi .big small{font-size:1.1rem;color:var(--mu)}#ybi .band-name{font-family:"Secular One",Assistant,sans-serif;font-size:1.5rem}#ybi .bars{display:grid;gap:8px}#ybi .bar{display:grid;grid-template-columns:7.5em 1fr 3em;align-items:center;gap:10px;font-size:.92rem}#ybi .track{height:8px;background:var(--as);border-radius:4px;overflow:hidden}#ybi .fill{height:100%;background:var(--ac);border-radius:4px}#ybi .num{color:var(--mu)}#ybi .tip{background:var(--as);border-radius:10px;padding:14px;display:grid;gap:4px}#ybi .cta{display:grid;gap:10px;border-top:1px solid var(--ln);padding-top:14px}#ybi .msg{background:var(--bg);border:1px dashed var(--ln);border-radius:8px;padding:10px 12px;user-select:all}#ybi .actions{display:flex;gap:10px;flex-wrap:wrap}#ybi button,#ybi .btnlink{font:inherit;font-weight:700;border-radius:10px;padding:12px 18px;cursor:pointer;text-decoration:none;line-height:1.2}#ybi button{border:0;background:var(--ac);color:#fff}#ybi button.ghost,#ybi .btnlink{background:transparent;color:var(--ac);border:1px solid var(--ac)}#ybi a{color:var(--ac);font-weight:700}#ybi .note{font-size:.82rem;color:var(--mu)}#ybi .pending{color:var(--mu)}</style>
+<div id="ybi" dir="rtl" lang="he">
+<div class="wrap">
+<header>
+<div class="eyebrow">למנהלים ולאנשי HR · 10 שאלות · 4 דקות</div>
+<h1>מדד השחיקה הצוותי</h1>
+<p class="lede">חשבו על הצוות שלכם בחודש האחרון וסמנו כמה כל משפט נכון לגביו. בסוף תקבלו מצב ים, את הממד שהכי לוחץ, וצעד אחד לעשות כבר השבוע.</p>
+</header>
+<div class="gauge" aria-live="polite">
+<div class="gauge-row">
+<span>מצב הים: <strong id="gBand">ממתין לתשובות</strong></span>
+<span><strong id="gCount">0</strong> מתוך 10 · ציון <strong id="gScore">0</strong>/40</span>
+</div>
+<div class="scale-wrap">
+<div class="scale" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="marker" id="marker" style="right:0"></div>
+</div>
+<div class="scale-labels"><span>מים רגועים</span><span>גלים ראשונים</span><span>ים סוער</span><span>סערה</span></div>
+</div>
+<form id="quiz" novalidate></form>
+<section class="result" id="result" aria-live="polite">
+<p class="pending" id="pending">ענו על כל 10 השאלות כדי לראות את התוצאה המלאה. הציון מתעדכן בזמן אמת בסרגל למעלה.</p>
+<div id="full" hidden>
+<div style="display:grid;gap:14px">
+<div class="eyebrow">התוצאה שלכם</div>
+<div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+<div class="big"><span id="rScore">0</span><small> / 40</small></div>
+<div class="band-name" id="rBand"></div>
+</div>
+<p id="rText"></p>
+<div class="bars" id="rBars"></div>
+<div class="tip">
+<strong id="rTipTitle"></strong>
+<span id="rTip"></span>
+</div>
+<div class="cta">
+<h3>רוצים לדעת מה עושים עם זה?</h3>
+<p>העתיקו את ההודעה ושלחו לי אותה ב<a href="https://www.linkedin.com/in/yoav-yosha/" target="_blank" rel="noopener">לינקדאין</a> או באינסטגרם (<span style="user-select:all">@yoav_yosha</span>). אחזור אליכם עם 3 צעדים שמותאמים לתוצאה של הצוות שלכם.</p>
+<div class="msg" id="rMsg"></div>
+<div class="actions">
+<button type="button" id="copyBtn">העתקת ההודעה</button>
+<a class="btnlink" href="https://www.linkedin.com/in/yoav-yosha/" target="_blank" rel="noopener">לפרופיל שלי בלינקדאין</a>
+<button type="button" class="ghost" id="resetBtn">התחלה מחדש</button>
+</div>
+<span class="note" id="copyNote" aria-live="polite"></span>
+</div>
+</div>
+</div>
+<p class="note">זהו כלי מודעות לצוותים, לא אבחון קליני ולא שאלון מחקרי מתוקף. אם מישהו בצוות במצוקה, הפנו אותו לגורם מקצועי. נבנה על ידי יואב יושע · חוסן ו-Wellness לארגונים.</p>
+</section>
+</div>
+</div>
+<script>
+(function () {
+var OPTS = ["אף פעם", "לעיתים רחוקות", "לפעמים", "לעיתים קרובות", "כמעט תמיד"];
+var DIMS = [
+{ key: "load", name: "עומס", tag: "כמה העבודה גולשת לחיים",
+tipTitle: "הצעד לשבוע הזה: שעת שקט צוותית",
+tip: "קבעו יחד כלל אחד: בלי הודעות עבודה אחרי 20:00 למשך שבועיים, כולל המנהלים. בסוף השבועיים שאלו את הצוות מה השתנה.",
+qs: ["אנשים בצוות עונים למיילים ולהודעות אחרי 21:00 או בסופי שבוע.",
+"משימות דחופות דוחקות שוב ושוב את העבודה החשובה באמת."] },
+{ key: "recovery", name: "התאוששות", tag: "האם יש זמן לחזור לעצמך",
+tipTitle: "הצעד לשבוע הזה: התאוששות ביומן",
+tip: "אחרי כל שיא (השקה, סגירת רבעון, חזרה ממילואים) שימו ביומן יום או חצי יום מופחת עומס. מתכננים אותו מראש, לא \"כשיהיה זמן\".",
+qs: ["אנשים לא מנצלים את ימי החופש שלהם, או \"עובדים קצת\" גם בחופש.",
+"אחרי תקופת לחץ חוזרים ישר לקצב מלא, בלי שום הפוגה."] },
+{ key: "managers", name: "מנהלים", tag: "מי מחזיק את המחזיקים",
+tipTitle: "הצעד לשבוע הזה: לבדוק את המנהלים",
+tip: "שאלו כל מנהל בצוות שאלה אחת: \"מי מחזיק אותך?\". 15 דקות בשבוע של שיחה אישית עם המנהל שלו שוות יותר מעוד סדנה לכל החברה.",
+qs: ["המנהלים הישירים בצוות נראים עייפים או מוצפים בעצמם.",
+"למנהלים אין זמן לשיחות אישיות עם העובדים שלהם."] },
+{ key: "connection", name: "חיבור", tag: "האם מותר להגיד \"קשה לי\"",
+tipTitle: "הצעד לשבוע הזה: סבב של 3 דקות",
+tip: "פתחו כל ישיבת צוות בסבב קצר: מספר מ-1 עד 10 ומילה אחת שמתארת את השבוע. בלי לפתור ובלי לנתח. רק לשמוע.",
+qs: ["כל אחד עובד לבד: פחות שיחות מסדרון, פחות צחוק, פחות \"בוא נחשוב יחד\".",
+"עובדים לא מרגישים בנוח להגיד \"קשה לי\" או \"אני לא עומד בזה\"."] },
+{ key: "exit", name: "סימני עזיבה", tag: "מה כבר רואים בשטח",
+tipTitle: "הצעד לשבוע הזה: להסתכל על המספרים",
+tip: "השוו את ימי המחלה הקצרים (יום-יומיים) ב-3 החודשים האחרונים לאותה תקופה אשתקד, ושבו לשיחה אישית עם 2 האנשים שהכי חשוב לכם לשמור.",
+qs: ["יש עלייה בימי מחלה קצרים, באיחורים או בהיעדרויות.",
+"אנשים טובים מדברים או מתנהגים כמו מי שכבר מסתכל החוצה."] }
+];
+var BANDS = [
+{ key: "calm", max: 10, name: "מים רגועים",
+text: "הצוות במצב טוב. יש עומס, אבל יש גם התאוששות וחיבור. המשימה עכשיו היא לשמור על זה כשהלחץ יעלה, ולא לחכות לגל הבא." },
+{ key: "waves", max: 20, name: "גלים ראשונים",
+text: "יש סימנים מוקדמים. מבחוץ הכל עובד, אבל הצוות מתחיל לשלם על זה מהרזרבות של עצמו. זה השלב הכי זול לטפל בו." },
+{ key: "rough", max: 30, name: "ים סוער",
+text: "שחיקה פעילה. אנשים מחזיקים, אבל במחיר. בלי שינוי בעבודה עצמה, השלב הבא הוא ימי מחלה ועזיבות של אנשים שקשה להחליף." },
+{ key: "storm", max: 40, name: "סערה",
+text: "הצוות על הקצה. זה כבר לא עניין של הטבה או סדנה. צריך לעצור, למדוד מה בדיוק שוחק, ולבנות תוכנית עם המנהלים. עכשיו." }
+];
+var form = document.getElementById("quiz");
+var qIndex = 0;
+DIMS.forEach(function (d) {
+var sec = document.createElement("section");
+sec.className = "dim";
+var head = document.createElement("div");
+head.className = "dim-head";
+var h = document.createElement("h2"); h.textContent = d.name;
+var t = document.createElement("span"); t.className = "tag"; t.textContent = d.tag;
+head.appendChild(h); head.appendChild(t); sec.appendChild(head);
+d.qs.forEach(function (text) {
+qIndex++;
+var id = "q" + qIndex;
+var box = document.createElement("div"); box.className = "q";
+var fs = document.createElement("fieldset");
+var lg = document.createElement("legend"); lg.textContent = qIndex + ". " + text;
+fs.appendChild(lg);
+var opts = document.createElement("div"); opts.className = "opts";
+OPTS.forEach(function (label, v) {
+var l = document.createElement("label");
+var inp = document.createElement("input");
+inp.type = "radio"; inp.name = id; inp.value = v; inp.id = id + "_" + v;
+inp.dataset.dim = d.key;
+var s = document.createElement("span"); s.textContent = label;
+l.appendChild(inp); l.appendChild(s); opts.appendChild(l);
+});
+fs.appendChild(opts); box.appendChild(fs); sec.appendChild(box);
+});
+form.appendChild(sec);
+});
+
+function bandFor(score) {
+for (var i = 0; i < BANDS.length; i++) if (score <= BANDS[i].max) return BANDS[i];
+return BANDS[BANDS.length - 1];
+}
+function compute() {
+var total = 0, answered = 0, dims = {};
+DIMS.forEach(function (d) { dims[d.key] = 0; });
+for (var i = 1; i <= 10; i++) {
+var c = form.querySelector('input[name="q' + i + '"]:checked');
+if (c) { answered++; var v = +c.value; total += v; dims[c.dataset.dim] += v; }
+}
+return { total: total, answered: answered, dims: dims };
+}
+function render() {
+var r = compute();
+document.getElementById("gCount").textContent = r.answered;
+document.getElementById("gScore").textContent = r.total;
+var pct = Math.min(100, (r.total / 40) * 100);
+document.getElementById("marker").style.right = "calc(" + pct + "% - 2px)";
+var band = bandFor(r.total);
+document.getElementById("gBand").textContent = r.answered ? band.name : "ממתין לתשובות";
+var done = r.answered === 10;
+document.getElementById("pending").hidden = done;
+document.getElementById("full").hidden = !done;
+var res = document.getElementById("result");
+if (!done) { res.removeAttribute("data-band"); return; }
+res.setAttribute("data-band", band.key);
+document.getElementById("rScore").textContent = r.total;
+document.getElementById("rBand").textContent = band.name;
+document.getElementById("rText").textContent = band.text;
+var top = DIMS[0];
+var bars = document.getElementById("rBars");
+bars.textContent = "";
+DIMS.forEach(function (d) {
+if (r.dims[d.key] > r.dims[top.key]) top = d;
+var row = document.createElement("div"); row.className = "bar";
+var n = document.createElement("span"); n.textContent = d.name;
+var tr = document.createElement("div"); tr.className = "track";
+var f = document.createElement("div"); f.className = "fill"; f.style.width = (r.dims[d.key] / 8 * 100) + "%";
+tr.appendChild(f);
+var num = document.createElement("span"); num.className = "num"; num.textContent = r.dims[d.key] + "/8";
+row.appendChild(n); row.appendChild(tr); row.appendChild(num);
+bars.appendChild(row);
+});
+document.getElementById("rTipTitle").textContent = top.tipTitle + " (" + top.name + ")";
+document.getElementById("rTip").textContent = top.tip;
+document.getElementById("rMsg").textContent =
+"היי יואב, מילאתי את מדד השחיקה הצוותי. הציון שלנו: " + r.total + "/40 (" + band.name + "). הממד הכי לוחץ: " + top.name + ". אשמח ל-3 הצעדים.";
+}
+form.addEventListener("change", render);
+form.addEventListener("submit", function (e) { e.preventDefault(); });
+document.getElementById("copyBtn").addEventListener("click", function () {
+var text = document.getElementById("rMsg").textContent;
+var note = document.getElementById("copyNote");
+function fallback() {
+var range = document.createRange();
+range.selectNodeContents(document.getElementById("rMsg"));
+var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+note.textContent = "ההודעה מסומנת. העתיקו אותה ידנית.";
+}
+try {
+navigator.clipboard.writeText(text).then(function () { note.textContent = "ההודעה הועתקה."; }, fallback);
+} catch (e) { fallback(); }
+});
+document.getElementById("resetBtn").addEventListener("click", function () {
+form.reset(); document.getElementById("copyNote").textContent = ""; render();
+window.scrollTo({ top: 0, behavior: "smooth" });
+});
+render();
+})();
+</script>
