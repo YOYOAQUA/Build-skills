@@ -1,8 +1,18 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מדד השחיקה הצוותי</title>
+<meta name="description" content="10 שאלות למנהלים ולאנשי HR: מה מצב השחיקה בצוות שלכם, מה הממד הכי לוחץ, ומה עושים עם זה השבוע.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Assistant:wght@400;600;700&display=swap">
 <style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
 /* Layout: one narrow column, sea-state gauge on top, question cards below, result panel at the end */
 :root {
   --bg: #eef4f6;
@@ -98,7 +108,8 @@ button.ghost { background: transparent; color: var(--accent); border: 1px solid 
 .pending { color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
-
+</head>
+<body>
 <div class="wrap" dir="rtl" lang="he">
   <header>
     <div class="eyebrow">למנהלים ולאנשי HR · 10 שאלות · 4 דקות</div>
@@ -304,3 +315,6 @@ button.ghost { background: transparent; color: var(--accent); border: 1px solid 
   render();
 })();
 </script>
+
+</body>
+</html>
