@@ -261,16 +261,26 @@
         btn.disabled = false; btn.textContent = label;
         if (!blob) return;
         var file = new File([blob], 'whatsapp-card.png', { type: 'image/png' });
+        var fallback = function () {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url; a.download = 'whatsapp-card.png';
+          document.body.appendChild(a); a.click(); a.remove();
+          var preview = document.querySelector('[data-wai-card-preview]');
+          if (preview) {
+            preview.src = url;
+            var box = preview.closest('[hidden]');
+            if (box) box.hidden = false;
+            preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        };
         if (mode === 'share' && navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'מה הוואטסאפ שלי יודע עליי' }).catch(function () {});
+          navigator.share({ files: [file], title: 'מה הוואטסאפ שלי יודע עליי' }).catch(function (e) {
+            if (!e || e.name !== 'AbortError') fallback();
+          });
           return;
         }
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = 'whatsapp-card.png';
-        document.body.appendChild(a); a.click(); a.remove();
-        var preview = document.querySelector('[data-wai-card-preview]');
-        if (preview) { preview.src = url; preview.closest('[hidden]') && (preview.closest('[hidden]').hidden = false); }
+        fallback();
       }, 'image/png');
     });
   }
