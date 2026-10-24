@@ -1,0 +1,45 @@
+{
+  "_note": "טיוטה. לא נוצר כלום ב-Zernio. יוצרים אחרי שהריל עולה (צריך את מזהה הפוסט), עם אישור של יואב, דרך הסקיל comment-to-dm. אינסטגרם בלבד, והפוסט עצמו עולה כ-Trial Reel. התאמה מסוג contains. כפתור התזכורת בשם משלו, כי ה-workflow של זהב מגיב ל'תזכירו לי אחר כך' ושולח את הלינק של זהב.",
+  "rules": [
+    {
+      "name": "reel-mirror",
+      "_post_id": "TBD_AFTER_REEL",
+      "platforms": ["instagram"],
+      "trigger": "comment",
+      "keywords": ["מראה", "mirror"],
+      "match": "contains",
+      "_false_positives": "'מראה' מופיע גם במשפטים כמו 'זה מראה ש...'. בריל שמוגבל לפוסט אחד זה בסדר: מי שכותב את זה שם כנראה רוצה את המדריך.",
+      "dm_message": "הנה זה 👇\nהמדריך המלא, צעד אחרי צעד: Claude עובר על שנה של וואטסאפ ובונה לכם ניתוח אישיות. הארכיטיפ שלכם, 5 ממדי אישיות, והפרצופים שלכם.\nשם ומייל, ומיד עוברים למדריך. כל הפרומפטים מחכים שם, עם כפתור העתקה.\nאין זמן עכשיו? לחצו על ⏰ ואזכיר לכם בעוד 4 שעות.\nנתקעים או שיש שאלה? כותבים לי כאן, אני עונה ❤️",
+      "buttons": [
+        {"type": "url", "title": "למדריך המלא", "url": "https://yoavyosha.ravpage.co.il/mirror?utm_source=ig&utm_medium=dm&utm_campaign=mirror"},
+        {"type": "postback", "title": "⏰ תזכירו לי על המראה", "payload": "mirror_remind_me"}
+      ],
+      "comment_reply": "שלחתי לך בפרטי 💛",
+      "comment_reply_variations": ["באינבוקס שלך ✨", "נשלח! תבדקו בפרטי", "אצלך בהודעות 🙌", "שלחתי, תהנו מהמראה"],
+      "public_reply_policy": "always",
+      "link_tracking": false
+    },
+    {
+      "name": "story-mirror",
+      "platforms": ["instagram"],
+      "trigger": "story_reply",
+      "keywords": ["מראה", "mirror"],
+      "match": "contains",
+      "_clash": "story-zahav תופס 'לינק' ו'מדריך' בכל הסטוריז. בסטורי של המראה לבקש רק את המילה מראה. לכבות את החוק אחרי יומיים, כי 'מראה' עולה גם סתם בתשובות לסטוריז.",
+      "dm_message": "(זהה ל-reel-mirror)",
+      "buttons": [
+        {"type": "url", "title": "למדריך המלא", "url": "https://yoavyosha.ravpage.co.il/mirror?utm_source=ig&utm_medium=story&utm_campaign=mirror"},
+        {"type": "postback", "title": "⏰ תזכירו לי על המראה", "payload": "mirror_remind_me"}
+      ],
+      "link_tracking": false
+    }
+  ],
+  "remind_workflow": {
+    "name": "mirror-remind-me (4h)",
+    "trigger_contains": "תזכירו לי על המראה",
+    "confirm": "סגור 👌 אזכיר לכם בעוד 4 שעות.",
+    "reminder": "⏰ תזכורת, כמו שביקשתם:\nהמראה מחכה לכם כאן 👇\nשם ומייל, ומיד עוברים למדריך.",
+    "link": "https://yoavyosha.ravpage.co.il/mirror?utm_source=ig&utm_medium=dm-reminder&utm_campaign=mirror",
+    "_how": "כמו zernio/remind_me_workflow.py בתיקיית הרילז, עם הערכים האלה"
+  }
+}

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>המדריך המלא · המראה שלכם · יואב יושע</title>
+<meta name="description" content="המדריך המלא: איך Claude עובר על שנה של וואטסאפ ובונה לכם ניתוח אישיות עם הוכחות. כל הפרומפטים עם כפתור העתקה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* מותאם קודם כל לנייד. מעל 980px נכנסת פריסת דסקטופ (בתחתית). */
+:root{--bg:#4A414A;--card:#625661;--navy:#352D34;--cream:#F6EAD0;--body:rgba(246,234,208,.86);--sky:#BFCFDD;--gold:#F2B84B;--gold2:#E39A35;--line:rgba(246,234,208,.16)}
+*{box-sizing:border-box}
+html,body{margin:0!important;padding:0!important}
+/* רב מסר עוטף את הקוד באלמנט ממורכז: מחזירים יישור לימין, וכל מה שממורכז מגדיר את זה בעצמו */
+section{text-align:right}
+body{background:var(--bg)!important;color:var(--cream)!important;font-family:'Heebo',Arial,sans-serif!important;font-size:18px;line-height:1.6;text-align:right;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+a{color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+section{padding:44px 0;border-top:1px solid var(--line)}
+.lbl{display:block;font-family:'Barlow Condensed','Heebo',sans-serif;font-weight:700;font-size:15px;letter-spacing:.12em;color:var(--sky);margin-bottom:12px}
+h2{font-size:clamp(28px,7.2vw,40px);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:16px}
+.body{color:var(--body);font-size:clamp(17px,4.4vw,19px)}
+.body+.body{margin-top:12px}
+.body strong{color:var(--cream)}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:440px;min-height:60px;padding:0 20px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)!important;font:inherit;font-weight:900;font-size:clamp(17px,4.8vw,20px);text-decoration:none!important;cursor:pointer;box-shadow:0 6px 20px rgba(242,184,75,.35);text-align:center}
+.btn.ghost{background:transparent;border:2px solid var(--gold);color:var(--gold)!important;box-shadow:none}
+.btn.wa{background:#25D366;color:#0b2e17!important;box-shadow:0 6px 20px rgba(37,211,102,.3)}
+.btns{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+
+/* ===== פתיחה ===== */
+.hero{border-top:0;padding:32px 0 36px}
+.pill{display:inline-block;border:1.5px solid var(--gold);color:var(--gold);border-radius:999px;padding:4px 14px;font-weight:800;font-size:14px;margin-bottom:14px}
+.hero h1{font-size:clamp(34px,9.6vw,56px);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .sub{color:var(--body);font-size:clamp(17px,4.6vw,20px)}
+.quick{display:grid;grid-template-columns:1fr;gap:8px;margin-top:22px}
+.quick a{display:grid;grid-template-columns:34px 1fr;column-gap:10px;align-items:center;background:var(--card);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--cream)}
+.quick i{grid-row:span 2;font-style:normal;font-size:24px}.quick b{font-size:17px}.quick span{font-size:14px;color:var(--body)}
+.hero-shot{margin:22px 0 0;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.hero-shot img{display:block;width:100%;height:auto}.hero-shot figcaption{font-size:14px;color:var(--sky);text-align:center;padding:8px;background:var(--navy)}
+.mob-only{display:block}.desk-only{display:none}
+
+/* ===== דרישות ===== */
+.need{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.need div{background:var(--card);border-radius:10px;padding:14px}
+.need b{display:block;font-size:17px;line-height:1.3}
+.need span{display:block;font-size:14px;color:var(--body);line-height:1.4;margin-top:4px}
+.note{font-size:15px;color:var(--sky);margin-top:12px}
+
+/* ===== פרומפטים ===== */
+.step{margin-top:26px}
+.step h3{display:flex;gap:10px;align-items:baseline;font-size:clamp(20px,5.4vw,24px);font-weight:900;line-height:1.25;margin-bottom:6px}
+.step h3 i{font-style:normal;font-family:'Barlow Condensed','Heebo',sans-serif;font-weight:700;font-size:30px;line-height:1;color:var(--gold)}
+.step p{font-size:16px;color:var(--body);line-height:1.5;margin-bottom:10px}
+.step p strong{color:var(--cream)}
+.prompt{position:relative;background:var(--cream);color:var(--navy);border-radius:10px;padding:16px 16px 14px;margin-top:10px}
+.prompt pre{margin:0;white-space:pre-wrap;unicode-bidi:plaintext;text-align:start;word-wrap:break-word;font-family:'Heebo',Arial,sans-serif;font-size:16px;line-height:1.55;font-weight:500}
+.copy{display:inline-flex;align-items:center;gap:6px;margin-top:12px;border:0;border-radius:999px;background:var(--navy);color:var(--cream);font:inherit;font-weight:800;font-size:15px;padding:8px 18px;cursor:pointer}
+.copy.ok{background:#2E7D4F}
+.tip{border-inline-start:3px solid var(--gold);padding:2px 12px 2px 0;margin-top:10px;font-size:15px;color:var(--body)}
+.tip strong{color:var(--cream)}
+.link{color:var(--gold);font-weight:800}
+.part{font-size:clamp(19px,5vw,22px);font-weight:900;color:var(--gold);margin:38px 0 0;padding-top:18px;border-top:1px dashed var(--line)}
+.mini{margin:6px 0 10px;padding-inline-start:20px;color:var(--body);font-size:16px;line-height:1.5}
+.mini li{margin-bottom:6px}
+.mini b{color:var(--cream)}
+
+/* ===== התקדמות ===== */
+.prog{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;background:rgba(53,45,52,.97);margin:22px -20px 0;padding:10px 20px;border-bottom:1px solid var(--line)}
+.prog-bar{flex:1;height:8px;border-radius:99px;background:rgba(246,234,208,.15);overflow:hidden}
+.prog-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width .3s}
+#progTxt{font-size:14px;font-weight:800;color:var(--gold);white-space:nowrap}
+.st-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.st-actions button{border:1.5px solid rgba(246,234,208,.3);background:transparent;color:var(--cream);border-radius:99px;padding:7px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.st-actions .done-btn.on{background:#2E7D4F;border-color:#2E7D4F}
+.step.is-done h3 i{color:#4CC38A}
+.step.is-done h3::after{content:'✓';color:#4CC38A}
+
+/* ===== תמונות ===== */
+.shot{margin:14px 0 0;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{font-size:14px;color:var(--body);padding:10px 12px;background:var(--navy);line-height:1.45}
+.phonef{max-width:240px;margin:14px auto 0;border:9px solid #1E191D;border-radius:32px;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.5);background:#10202C}
+.phonef img{display:block;width:100%;height:auto}
+
+/* ===== טיפים + תקלות ===== */
+.tips{list-style:none;margin:0;padding:0;counter-reset:t}
+.tips li{display:grid;grid-template-columns:40px 1fr;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.tips li:last-child{border-bottom:0}
+.tips li::before{counter-increment:t;content:counter(t);font-family:'Barlow Condensed','Heebo',sans-serif;font-weight:700;font-size:34px;line-height:.95;color:var(--gold)}
+.tips b{display:block;font-size:18px;color:var(--cream)}
+.tips p{font-size:16px;color:var(--body);line-height:1.45}
+details{background:var(--card);border-radius:10px;padding:0 16px;margin-top:8px}
+summary{cursor:pointer;font-weight:800;font-size:17px;padding:14px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'+';display:inline-block;width:22px;color:var(--gold);font-weight:900}
+details[open] summary::before{content:'\2212'}
+details p{font-size:16px;color:var(--body);line-height:1.5;padding-bottom:14px}
+.faq details p b{color:var(--cream)}
+.rescue{display:grid;grid-template-columns:1fr;gap:14px;background:var(--navy);border:1.5px solid rgba(242,184,75,.45);border-radius:14px;padding:18px;margin-bottom:16px}
+.rescue b{color:var(--gold);font-size:18px}
+.rescue p{font-size:15px;color:var(--body);margin-top:6px}
+.keys kbd{display:inline-block;background:var(--card);border-radius:6px;padding:1px 7px;font-family:inherit;font-size:13px;color:var(--cream);border:1px solid var(--line)}
+
+/* ===== עליי ===== */
+.about{background:var(--cream);color:var(--navy);border-top:0}
+.about .lbl{color:#6E8296}
+.about .body{color:#4A414A}
+.about .body strong{color:var(--navy)}
+.about .photo{border-radius:12px;overflow:hidden;aspect-ratio:4/3;margin-bottom:22px}
+.about .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.anums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:20px}
+.anums div{background:var(--navy);border-radius:10px;padding:12px 8px;text-align:center}
+.anums b{display:block;direction:ltr;font-family:'Barlow Condensed','Heebo',sans-serif;font-weight:700;font-size:clamp(28px,8vw,42px);line-height:1;color:var(--gold)}
+.anums span{display:block;font-size:13px;color:var(--body);line-height:1.3;margin-top:6px}
+
+/* ===== גברים ===== */
+.men{background:var(--navy);border-top:0}
+.men h2 em{font-style:normal;color:var(--gold)}
+
+/* ===== דסקטופ ===== */
+@media (min-width:980px){
+  .wrap{max-width:1180px;padding:0 40px}
+  section{padding:76px 0}
+  h2{font-size:46px;margin-bottom:20px}
+  .lbl{font-size:16px}
+  .body{font-size:20px}
+  .hero{padding:52px 0 64px;text-align:center}
+  .hero .pill{margin-bottom:20px}
+  .hero h1{font-size:62px;max-width:940px;margin:0 auto 16px}
+  .hero .sub{font-size:21px;max-width:760px;margin:0 auto}
+  .quick{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px;text-align:right}
+  .quick a{padding:18px}
+  .hero-shot{margin:26px auto 0;max-width:1000px}
+  .mob-only{display:none}.desk-only{display:block}
+  .need{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .need div{padding:22px 20px}
+  .need b{font-size:19px}
+  .need span{font-size:15px}
+  #prompts > .wrap > .body{max-width:780px}
+  .part{margin:56px 0 0;padding-top:0;border-top:0;font-size:26px}
+  .step{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:40px;align-items:start;margin:0;padding:32px 0;border-bottom:1px solid var(--line)}
+  .step h3{font-size:27px;margin-bottom:10px}
+  .step h3 i{font-size:36px}
+  .step p{font-size:17px}
+  .st-code .prompt{padding:20px 22px 16px}
+  .st-code .prompt pre{font-size:17px}
+  .tips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .tips li{background:var(--card);border-radius:12px;padding:22px;border-bottom:0}
+  .faq{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;align-items:start}
+  .faq details{margin-top:0}
+  .rescue{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center}
+  .about .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:60px;align-items:center}
+  .about .photo{margin:0;aspect-ratio:4/5}
+  .men .wrap,.share .wrap{max-width:880px;text-align:center}
+  .men .btns,.share .btns{flex-direction:row;justify-content:center;align-items:center}
+  .men .btns .btn,.share .btns .btn{width:auto;min-width:320px}
+  .prog{margin:26px -40px 0;padding:12px 40px}
+}
+footer{background:#2B242A;color:#B8AAB5;font-size:14px;text-align:center;padding:24px 20px;line-height:1.7}
+footer a{color:var(--cream)}
+</style>
+</head>
+<body>
+
+<!-- ===== 1. פתיחה ===== -->
+<section class="hero">
+  <div class="wrap">
+    <span class="pill">✓ נרשמתם. הלינק לדף הזה נשלח גם למייל</span>
+    <h1>יש, יא אח/ות של קלוד! הנה <em>המראה</em> שלכם.</h1>
+    <p class="sub">המדריך המלא, צעד אחרי צעד, עם צילומי מסך: הארכיטיפ שלכם, 5 ממדי אישיות, הפרצופים שלכם, איך אתם נותנים אהבה, והקול הפנימי. ההתקנה לוקחת 5 דקות, וכל הפרומפטים מחכים לכם כאן למטה, עם כפתור העתקה.</p>
+
+    <div class="quick">
+      <a href="#s1"><i>⚙️</i><b>מתקינים</b><span>5 דקות, פעם אחת</span></a>
+      <a href="#s4"><i>🪞</i><b>המראה הראשונה</b><span>משפט אחד, ו-3 שאלות</span></a>
+      <a href="#s5"><i>📖</i><b>קוראים את הדוח</b><span>איפה להסתכל קודם</span></a>
+      <a href="#s7"><i>🔎</i><b>הולכים עמוק</b><span>שאלות ותוכנית ל-7 ימים</span></a>
+    </div>
+    <figure class="hero-shot mob-only"><img src="img/demo-report-mobile.png" alt="דוגמה לדוח המראה"><figcaption>ככה נראה הדוח בסוף (דוגמה עם נתונים בדויים)</figcaption></figure>
+    <figure class="hero-shot desk-only"><img src="img/demo-report-desktop.png" alt="דוגמה לדוח המראה"><figcaption>ככה נראה הדוח בסוף (דוגמה עם נתונים בדויים)</figcaption></figure>
+  </div>
+</section>
+
+<!-- ===== 2. מה צריך ===== -->
+<section>
+  <div class="wrap">
+    <span class="lbl">[ 01 · לפני שמתחילים ]</span>
+    <h2>מה צריך</h2>
+    <div class="need">
+      <div><b>מק + וואטסאפ למחשב</b><span>המסלול המלא. בווינדוס: מסלול מקוצר עם שיחות מיוצאות</span></div>
+      <div><b>מנוי Claude</b><span>Pro ומעלה. אפליקציית הדסקטופ, לשונית Code</span></div>
+      <div><b>5 דקות</b><span>התקנה, פעם אחת. אחרי זה, כל מראה היא משפט אחד</span></div>
+      <div><b>חצי שעה של שקט</b><span>כדי לקרוא את הדוח בלי למהר 😉</span></div>
+    </div>
+    <p class="note">🔒 Claude קורא עותק של ההודעות, במחשב שלכם. הוא לא שולח כלום, ולא מתחבר לחשבון. כמו בכל שיחה איתו, מה שהוא קורא נשלח אליו לניתוח.</p>
+    <div class="btns"><a class="btn ghost" href="https://claude.ai/download" target="_blank" rel="noopener">להורדת אפליקציית Claude ←</a></div>
+  </div>
+</section>
+
+<!-- ===== 3. הפרומפטים ===== -->
+<section id="prompts">
+  <div class="wrap">
+    <span class="lbl">[ 02 · המדריך ]</span>
+    <h2>הפרומפטים, לפי הסדר</h2>
+    <p class="body">מעתיקים, מדביקים ב-Claude, ושולחים. <strong>החלק הראשון עושים פעם אחת.</strong> אחרי זה, כל מראה חדשה היא משפט אחד.</p>
+
+    <div class="prog" id="prog"><div class="prog-bar"><i id="progFill"></i></div><span id="progTxt"></span></div>
+
+    <h3 class="part">חלק א · התקנה (פעם אחת)</h3>
+
+    <div data-n="1" id="s1" class="step">
+      <div class="st-text">
+      <h3><i>1</i>מורידים את Claude</h3>
+      <p>מורידים את אפליקציית Claude למחשב ומתחברים. צריך מנוי בתשלום (Pro ומעלה). באפליקציה עוברים ללשונית <strong>Code</strong>: זה Claude Code, החלק שעובד על המחשב שלכם.</p>
+      <div class="btns" style="margin:0"><a class="btn ghost" href="https://claude.ai/download" target="_blank" rel="noopener">להורדת Claude ←</a></div>
+      </div>
+      <div class="st-code">
+      <figure class="shot"><img src="img/step1-download.webp" alt="עמוד ההורדה של Claude"><figcaption>👆 ככה נראה עמוד ההורדה. לוחצים על הכפתור, מתקינים, ומתחברים.</figcaption></figure>
+      </div>
+    </div>
+
+    <div data-n="2" class="step">
+      <div class="st-text">
+      <h3><i>2</i>וואטסאפ למחשב (במק)</h3>
+      <p>המסלול המלא עובד עם אפליקציית <strong>WhatsApp למחשב</strong> במק, וקורא את כל השיחות בבת אחת. כבר יש לכם והיא מחוברת? דלגו לשלב 3.</p>
+      <p>אין? מורידים, פותחים, וסורקים את הקוד עם הטלפון (בטלפון: הגדרות ← מכשירים מקושרים ← קישור מכשיר). משאירים את האפליקציה פתוחה כרבע שעה, כדי שההודעות יסתנכרנו.</p>
+      <div class="btns" style="margin:0"><a class="btn ghost" href="https://www.whatsapp.com/download" target="_blank" rel="noopener">להורדת WhatsApp למחשב ←</a></div>
+      </div>
+      <div class="st-code">
+      <figure class="shot"><img src="img/wa-download.webp" alt="עמוד ההורדה של וואטסאפ למחשב"><figcaption>👆 עמוד ההורדה של וואטסאפ. בוחרים Mac ולוחצים Download.</figcaption></figure>
+      <figure class="shot"><img src="img/wa-link.webp" alt="קישור מכשיר בטלפון"><figcaption>📱 מקשרים את המחשב לטלפון: הגדרות ← מכשירים מקושרים ← קישור מכשיר, וסורקים.</figcaption></figure>
+      <p class="tip">🪟 <strong>יש לכם ווינדוס?</strong> עובדים עם שיחות שמייצאים מהטלפון. כל ההוראות בשלב 9. שלבים 1 ו-3 זהים.</p>
+      <p class="tip">⏳ <strong>כמה היסטוריה Claude יראה?</strong> את מה שיש בוואטסאפ למחשב. אם חיברתם אותו רק עכשיו, יהיו בו בעיקר ההודעות האחרונות. זה מספיק כדי להתחיל.</p>
+      </div>
+    </div>
+
+    <div data-n="3" class="step">
+      <div class="st-text">
+      <h3><i>3</i>מתקינים את הסקיל</h3>
+      <p>הסקיל wa-mirror הוא "ספר ההוראות" ש-Claude קורא לפני שהוא בונה לכם את המראה. הוא חינמי, ו-Claude מוריד ומתקין אותו לבד. לא צריך להוריד שום קובץ.</p>
+      <p>ב-Claude ← לשונית Code ← סשן חדש. מעתיקים, מדביקים ושולחים:</p>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>תתקין לי את הסקיל wa-mirror מהקישור הזה:
+https://github.com/YOYOAQUA/wa-mirror
+תוריד את הקבצים, ותשים אותם בתיקייה בשם wa-mirror בתוך תיקיית הסקילים של Claude.
+תבדוק שיש בה קובץ SKILL.md.
+בסוף תגיד לי לפתוח סשן חדש.</pre><button class="copy" type="button">העתקה</button></div>
+      <p class="tip">Claude יבקש אישור לפני כל פעולה. קוראים ומאשרים. אחרי ההתקנה פותחים <strong>סשן חדש</strong>, כדי ש-Claude יכיר את הסקיל.</p>
+      </div>
+    </div>
+
+    <h3 class="part">חלק ב · המראה</h3>
+
+    <div data-n="4" id="s4" class="step">
+      <div class="st-text">
+      <h3><i>4</i>"תנתח את הוואטסאפ שלי"</h3>
+      <p>בסשן החדש. Claude יוצר תיקייה בשם WhatsApp-Insights, קורא את השיחות מהשנה האחרונה, וסופר. אחר כך הוא שואל 3 שאלות קצרות: מגדר, ילדים ועיסוק. ואז הוא קורא דגימה של כאלף הודעות שלכם, וכותב את ניתוח האישיות. 5-10 דקות, וזמן טוב לקפה.</p>
+      <p>בסוף <strong>הדוח נפתח לבד בדפדפן.</strong></p>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>תנתח את הוואטסאפ שלי</pre><button class="copy" type="button">העתקה</button></div>
+      <figure class="shot"><img src="img/mac-allow.webp" alt="חלונית אישור של macOS"><figcaption>🔐 אם קופצת חלונית כזאת, לוחצים "אפשר".</figcaption></figure>
+      <p class="tip">🔐 קופצת חלונית ששואלת אם לאפשר ל-Claude גישה לנתונים של אפליקציות אחרות? לוחצים <strong>אפשר</strong>. בלי זה הוא לא יכול לקרוא.</p>
+      <p class="tip">Claude אומר שאין לו הרשאה? הגדרות המערכת ← פרטיות ואבטחה ← גישה מלאה לדיסק ← מדליקים את Claude. אחר כך סוגרים את Claude, פותחים מחדש, ושולחים שוב את המשפט.</p>
+      <figure class="shot"><img src="img/fda.webp" alt="גישה מלאה לדיסק בהגדרות המערכת"><figcaption>⚙️ הגדרות המערכת ← פרטיות ואבטחה ← גישה מלאה לדיסק ← Claude דולק.</figcaption></figure>
+      <p class="tip">רוצים יותר משנה אחורה? כותבים <strong>"תנתח את כל ההיסטוריה של הוואטסאפ שלי"</strong>. זה לוקח יותר זמן.</p>
+      </div>
+    </div>
+
+    <div data-n="5" id="s5" class="step">
+      <div class="st-text">
+      <h3><i>5</i>קוראים את הדוח</h3>
+      <p>הדוח בנוי בשכבות, וכל טענה בו מגיעה עם הוכחה. ככה כדאי לקרוא אותו:</p>
+      <ol class="mini">
+        <li><b>הארכיטיפ.</b> אחד מ-12, הראשי והמשני, ולמה דווקא הוא.</li>
+        <li><b>חמשת הממדים.</b> סקרנות, סדר, מוחצנות, חום ויציבות. כל אחד הוא סקאלה, לא תווית.</li>
+        <li><b>הפרצופים.</b> מי אתם עם בן או בת הזוג, בעבודה, עם החברים ועם עצמכם.</li>
+        <li><b>סגנון קשר ואהבה.</b> מי יוזם, מה קורה כשלא עונים, ואיך אתם נותנים אהבה.</li>
+        <li><b>ערכים מול מציאות.</b> מה חשוב לכם, ואיפה ההודעות באמת הולכות. <b>תתחילו מהפער.</b></li>
+        <li><b>הקול הפנימי.</b> איך אתם מדברים אל עצמכם, ומה אפשר להגיד במקום.</li>
+        <li><b>קבוצות, השנה כגל, קצב ומעגל.</b> התפקיד שלכם, מתי פרחתם, ומתי הטלפון עובד.</li>
+        <li><b>כיוון.</b> הדפוס שמחבר הכל, וצעד אחד לשבוע הקרוב.</li>
+      </ol>
+      </div>
+      <div class="st-code">
+      <figure class="shot"><img src="img/demo-traits.png" alt="חמשת ממדי האישיות בדוח"><figcaption>🧬 חמשת הממדים (דוגמה): איפה אתם על כל סקאלה, והוכחה לכל אחד.</figcaption></figure>
+      <figure class="shot"><img src="img/demo-faces.png" alt="הפרצופים בדוח"><figcaption>🎭 הפרצופים (דוגמה עם שמות בדויים): אותו אדם, בעולמות שונים.</figcaption></figure>
+      </div>
+    </div>
+
+    <div data-n="6" class="step">
+      <div class="st-text">
+      <h3><i>6</i>כרטיס לסטורי</h3>
+      <p>בראש הדוח יש כפתור <strong>"שיתוף הכרטיס לסטורי"</strong>. הוא מכין תמונה עם הארכיטיפ שלכם, הציון ושלושה מספרים. בלי שמות ובלי תוכן של הודעות.</p>
+      <p>מעלים לסטורי ומתייגים אותי, <strong>@yoav_yosha</strong>. אני רוצה לראות 😉</p>
+      <p class="tip">🔒 <strong>משתפים רק את הכרטיס.</strong> קובץ הדוח עצמו (report.html) מכיל את ההודעות שלכם, אז לא שולחים אותו לאף אחד.</p>
+      </div>
+      <div class="st-code">
+      <div class="phonef"><img src="img/demo-story-card.png" alt="כרטיס לסטורי לדוגמה"></div>
+      </div>
+    </div>
+
+    <h3 class="part" id="s7">חלק ג · הולכים עמוק</h3>
+
+    <div data-n="7" class="step">
+      <div class="st-text">
+      <h3><i>7</i>שואלים את Claude על הדוח</h3>
+      <p>Claude כבר קרא את המספרים ואת הדגימה. עכשיו אפשר לשאול אותו כל שאלה, באותו סשן. כמה שאלות שעובדות טוב:</p>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>למה דווקא הארכיטיפ הזה? תראה לי 3 הוכחות מהשיחות,
+ומה הצד הפחות נוח שלו אצלי.</pre><button class="copy" type="button">העתקה</button></div>
+      <div class="prompt"><pre>איזה מהפרצופים שלי הכי שונה מהאחרים?
+מה הוא אומר עליי, ומה הייתי מרוויח אם הוא היה מופיע גם במקומות אחרים?</pre><button class="copy" type="button">העתקה</button></div>
+      <div class="prompt"><pre>הפער בין הערכים שלי למה שקורה בפועל בשיחות:
+מה צעד אחד קטן שסוגר אותו השבוע?</pre><button class="copy" type="button">העתקה</button></div>
+      <div class="prompt"><pre>האמונה המגבילה הכי חזקה שמצאת: איפה היא מופיעה אצלי בשיחות,
+ומה המשפט ההפוך שכדאי לי לתרגל השבוע?</pre><button class="copy" type="button">העתקה</button></div>
+      </div>
+    </div>
+
+    <div data-n="8" class="step">
+      <div class="st-text">
+      <h3><i>8</i>תוכנית קטנה ל-7 ימים</h3>
+      <p>הדוח נותן צעד אחד. כאן Claude הופך אותו לשבוע: פעולה קטנה ביום, עד 10 דקות.</p>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>תבנה לי תוכנית ל-7 ימים לפי הדוח: פעולה אחת ביום, עד 10 דקות.
+תתחיל מהדבר שהכי מוריד לי את הציון.
+ובסוף תגיד לי מה לבדוק כשאריץ את המראה שוב בעוד חודש.</pre><button class="copy" type="button">העתקה</button></div>
+      </div>
+    </div>
+
+    <div data-n="9" class="step">
+      <div class="st-text">
+      <h3><i>9</i>ווינדוס, או שיחות מהטלפון</h3>
+      <p>אין מק, או שאתם רוצים להוסיף שיחה ישנה? מייצאים אותה מהטלפון, <strong>ללא מדיה</strong>, ושולחים את הקובץ לעצמכם במייל. מורידים למחשב, ו-Claude מנתח את מה שקיבל.</p>
+      <p>הכי מעניין: 2-3 שיחות. בן או בת זוג, קבוצת המשפחה, והחבר הכי קרוב.</p>
+      </div>
+      <div class="st-code">
+      <figure class="shot"><img src="img/export.webp" alt="ייצוא צ'אט באייפון ובאנדרואיד"><figcaption>📤 אייפון: השם למעלה ← ייצוא צ'אט ← ללא מדיה. אנדרואיד: ⋮ ← עוד ← ייצוא צ'אט ← ללא מדיה.</figcaption></figure>
+      <div class="prompt"><pre>ייצאתי שיחות מוואטסאפ, והקבצים בתיקיית ההורדות.
+תנתח את הוואטסאפ שלי מהקבצים האלה.</pre><button class="copy" type="button">העתקה</button></div>
+      <p class="tip">Claude ישאל איזה מהשמות בשיחה הוא אתם. עונים, והוא ממשיך.</p>
+      </div>
+    </div>
+
+    <div data-n="10" class="step">
+      <div class="st-text">
+      <h3><i>10</i>מראה חוזרת בעוד חודש</h3>
+      <p>הדוח הראשון הוא נקודת התחלה. אחרי חודש עם הצעד שבחרתם, מריצים שוב ורואים מה זז.</p>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>תנתח את הוואטסאפ שלי שוב, ותשווה לדוח הקודם בתיקייה WhatsApp-Insights:
+מה השתנה בארכיטיפ, בממדים, בציון ובמשפט שחוזר אצלי?</pre><button class="copy" type="button">העתקה</button></div>
+      </div>
+    </div>
+
+    <div data-n="11" class="step">
+      <div class="st-text">
+      <h3><i>11</i>משהו לא עובד</h3>
+      </div>
+      <div class="st-code">
+      <div class="prompt"><pre>המראה לא עובדת. תבדוק מה הבעיה, תסביר לי במילים פשוטות, ותתקן.
+אם אחרי 3 ניסיונות זה עדיין לא עובד, תעצור ותגיד לי.</pre><button class="copy" type="button">העתקה</button></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 4. טיפים ===== -->
+<section>
+  <div class="wrap">
+    <span class="lbl">[ 03 · לפני שמסתכלים במראה ]</span>
+    <h2>7 דברים שכדאי לדעת</h2>
+    <ol class="tips">
+      <li><div><b>הארכיטיפ הוא שפה, לא כלוב</b><p>הוא מתאר מה בולט אצלכם השנה. בשנה אחרת, בתקופה אחרת, יכול לעלות אחר.</p></div></li>
+      <li><div><b>תקראו את ההוכחות, לא רק את השם</b><p>הכותרת מושכת, אבל האמת נמצאת במספרים ובמשפטים שלכם שמתחתיה.</p></div></li>
+      <li><div><b>הפרצוף הכי שונה הוא הכי מעניין</b><p>איפה שאתם כותבים הכי ארוך, הכי רך או הכי מצחיק, שם מסתתר משהו שרוצה עוד מקום.</p></div></li>
+      <li><div><b>הפער הוא המקום לצמוח</b><p>הדוח מראה מה חשוב לכם ואיפה הזמן באמת הולך. לא צריך לסגור את כל הפער, רק לזוז צעד.</p></div></li>
+      <li><div><b>המשפט שחוזר הוא המפתח</b><p>"אין לי זמן" שנכתב 100 פעמים בשנה הוא כבר לא תיאור. הוא אמונה.</p></div></li>
+      <li><div><b>תשובה תוך 2 דקות היא הרגל, לא חובה</b><p>רוב ההודעות יכולות לחכות שעה. מעטות באמת לא.</p></div></li>
+      <li><div><b>צעד אחד, לא מהפכה</b><p>בוחרים את הצעד שהדוח הציע, ובודקים שוב בעוד חודש.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== 5. תקלות נפוצות ===== -->
+<section>
+  <div class="wrap">
+    <span class="lbl">[ 04 · נתקעתם? ]</span>
+    <h2>שאלות ותקלות נפוצות</h2>
+    <div class="rescue">
+      <div class="r-text">
+        <b>📸 הטריק שפותר כמעט הכל</b>
+        <p>משהו נראה לכם מוזר? מצלמים את המסך וגוררים את התמונה לחלון של Claude. הוא קורא את מה שיש בתמונה ומסביר מה קרה.</p>
+        <p class="keys">צילום מסך: במק <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>4</kbd> · בווינדוס <kbd>Win</kbd> <kbd>⇧</kbd> <kbd>S</kbd></p>
+      </div>
+      <div class="prompt"><pre>צילמתי לך את המסך. תסביר לי במילים פשוטות מה קרה, ותתקן.
+אם צריך ממני משהו, תגיד לי בדיוק מה ללחוץ.</pre><button class="copy" type="button">העתקה</button></div>
+    </div>
+    <div class="faq">
+    <details><summary>Claude אומר שאין לו הרשאה לקרוא</summary><p><b>מה עושים:</b> הגדרות המערכת ← פרטיות ואבטחה ← גישה מלאה לדיסק ← מדליקים את Claude. סוגרים את Claude לגמרי ופותחים מחדש. אם קופצת חלונית "לאפשר גישה לנתונים של אפליקציות אחרות", לוחצים אפשר.</p></details>
+    <details><summary>קופצת חלונית שמבקשת להתקין כלים</summary><p><b>מה עושים:</b> מאשרים. זו התקנה חד-פעמית של אפל (Command Line Tools), שהסקיל צריך כדי לרוץ. כשהיא מסתיימת, שולחים שוב "תנתח את הוואטסאפ שלי".</p></details>
+    <details><summary>Claude לא מוצא את הוואטסאפ</summary><p><b>מה עושים:</b> בודקים שאפליקציית WhatsApp למחשב מותקנת, פתוחה ומחוברת לטלפון (שלב 2). בווינדוס, עוברים למסלול עם שיחות מיוצאות (שלב 9).</p></details>
+    <details><summary>Claude לא מכיר את הסקיל</summary><p><b>מה עושים:</b> פותחים <b>סשן חדש</b>. הסקיל נטען רק בסשן חדש. אם זה עדיין לא עובד, מדביקים שוב את הפרומפט של שלב 3.</p></details>
+    <details><summary>הדוח לא נפתח</summary><p><b>מה עושים:</b> כותבים ל-Claude "תפתח לי את הדוח האחרון של המראה". הדוח נשמר בתיקייה WhatsApp-Insights, בתיקיית הבית.</p></details>
+    <details><summary>יש לי מעט שיחות בדוח</summary><p><b>למה:</b> Claude רואה את מה שיש בוואטסאפ למחשב. אם חיברתם אותו לאחרונה, ההיסטוריה קצרה. שיחות חשובות וישנות אפשר לייצא מהטלפון ולהוסיף (שלב 9).</p></details>
+    <details><summary>זה בטוח? יחסמו לי את החשבון?</summary><p>Claude קורא עותק של קובץ שכבר נמצא במחשב שלכם. הוא לא מתחבר לחשבון ולא שולח כלום, אז אין לוואטסאפ סיבה לחסום. את המספרים סופרים במחשב. כדי לכתוב את הניתוח, Claude קורא את המספרים ודגימה של כאלף הודעות שלכם, עם הודעה או שתיים שקדמו לכל אחת, להקשר. כמו בכל שיחה איתו, זה לא נשלח לשום מקום אחר.</p></details>
+    <details><summary>איך מוחקים הכל?</summary><p>כותבים ל-Claude: "תמחק את התיקייה WhatsApp-Insights עם כל הדוחות". שם נמצאים העותק, המספרים והדוחות. הוואטסאפ עצמו לא משתנה.</p></details>
+    </div>
+    <p class="note" style="margin-top:18px">🛠 הסקיל wa-mirror הוא קוד פתוח: <a class="link" href="https://github.com/YOYOAQUA/wa-mirror" target="_blank" rel="noopener">github.com/YOYOAQUA/wa-mirror</a></p>
+    <p class="note">זו מראה, לא אבחון. אם קשה לכם, ער״ן זמינים 24/7 בטלפון 1201.</p>
+  </div>
+</section>
+
+<!-- ===== 6. עליי ===== -->
+<section class="about">
+  <div class="wrap">
+    <div class="photo"><img src="IMG_TALK" alt="יואב יושע מדבר מול קהל עם מיקרופון"></div>
+    <div class="about-text">
+    <span class="lbl">[ 05 · מי אני ]</span>
+    <h2>לא איש הייטק. פשוט רציתי לראות.</h2>
+    <p class="body">אני יואב יושע. הייתי שכיר בעולם הביטחון והסייבר. התחלתי מ-30 ימים של אמבטיות קרח ותיעוד קצר בטלפון. בלי קהל, בלי אינסטגרם.</p>
+    <p class="body">משם נבנו פודקאסט, הרצאות ועסק. וכולם קורים בטלפון, ליד שני ילדים שרוצים אבא שמסתכל עליהם. רציתי לדעת איך אני באמת חי, לא איך נדמה לי. <strong>מזה נולד wa-mirror</strong>, סקיל חינמי בעברית, כדי שגם אתם תוכלו להסתכל.</p>
+    <p class="body">אצלי יצא היוצר, עם הרבה מהמנהיג. והדבר שהכי תפס אותי: ההודעות שאני כותב לעצמי ארוכות פי 7 מאלה שאני שולח לכל השאר.</p>
+    <div class="anums">
+      <div><b>148K</b><span>הודעות בשנה אצלי</span></div>
+      <div><b>130</b><span>פרקי פודקאסט</span></div>
+      <div><b>1M</b><span>צפיות בחודש, מהטלפון</span></div>
+    </div>
+    <div class="btns"><a class="btn" style="background:var(--navy);color:var(--cream)!important;box-shadow:none" href="https://www.instagram.com/yoav_yosha/" target="_blank" rel="noopener">לעקוב אחריי באינסטגרם ←</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. לגברים ===== -->
+<section class="men">
+  <div class="wrap">
+    <span class="lbl">[ 06 · ולגברים שביניכם ]</span>
+    <h2>ראיתם את המראה. <em>ומה עכשיו?</em></h2>
+    <p class="body">אם מה שראיתם עורר בכם רצון למשהו אחר, יותר משמעות, יותר נוכחות, משהו שלכם, יש לי קבוצת וואטסאפ שקטה לגברים. שם אני משתף כלים ומדריכים חינמיים.</p>
+    <p class="body"><strong>וב-10.11 אני מעביר את "גבר בתנועה · למצוא משמעות וליצור"</strong>: ערב לייב אחד, לגברים שרוצים יותר מהחיים. מי שבקבוצה שומע ראשון.</p>
+    <div class="btns">
+      <a class="btn wa" href="https://chat.whatsapp.com/Fn4A2lttwIVAJfYIiPdVLI" target="_blank" rel="noopener">להצטרפות לקבוצת הגברים ←</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. שיתוף ===== -->
+<section class="share">
+  <div class="wrap">
+    <h2 style="font-size:clamp(24px,6.4vw,32px)">מכירים מישהו שנרדם עם הטלפון ביד?</h2>
+    <p class="body">חבר שעונה תוך דקה גם באמצע ארוחת שישי, אחות שהוואטסאפ שלה לא נח. שלחו להם את הדף.</p>
+    <div class="btns"><button class="btn ghost" type="button" id="shareBtn">שליחה בוואטסאפ ←</button></div>
+  </div>
+</section>
+
+<footer>© יואב יושע · <a href="https://www.instagram.com/yoav_yosha/" target="_blank" rel="noopener">@yoav_yosha</a><br>קיבלתם מייל שלא רציתם? בכל מייל יש קישור להסרה.</footer>
+
+<script>
+(function(){
+  var SIGNUP_URL='https://yoavyosha.ravpage.co.il/mirror';
+  var $=function(id){return document.getElementById(id);};
+
+  /* כפתורי העתקה */
+  function legacy(txt){var t=document.createElement('textarea');t.value=txt;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(x){}document.body.removeChild(t);}
+  function copyText(txt,done){
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,function(){legacy(txt);done();});}
+    else{legacy(txt);done();}
+  }
+  var cs=document.querySelectorAll('.copy');
+  for(var j=0;j<cs.length;j++){cs[j].addEventListener('click',function(){
+    var b=this,txt=b.parentNode.querySelector('pre').textContent;
+    copyText(txt,function(){b.textContent='✓ הועתק';b.className='copy ok';setTimeout(function(){b.textContent='העתקה';b.className='copy';},1800);});
+    try{if(window.fbq)fbq('trackCustom','PromptCopy');}catch(x){}
+  });}
+
+  /* התקדמות: "סמנו כשסיימתם" ליד כל שלב, נשמר בדפדפן */
+  var DKEY='mirror_done',done={};
+  try{done=JSON.parse(localStorage.getItem(DKEY)||'{}')||{};}catch(x){done={};}
+  var steps=document.querySelectorAll('.step[data-n]');
+  function prog(){
+    var n=0;for(var a=0;a<steps.length;a++){if(done[steps[a].getAttribute('data-n')])n++;}
+    $('progFill').style.width=(100*n/steps.length)+'%';
+    $('progTxt').textContent=n+' מתוך '+steps.length+' שלבים'+(n===steps.length?' 🎉':'');
+  }
+  for(var e=0;e<steps.length;e++){(function(st){
+    var id=st.getAttribute('data-n'),box=document.createElement('div');box.className='st-actions';
+    var d=document.createElement('button');d.type='button';d.className='done-btn';
+    function paint(){var on=!!done[id];d.textContent=on?'✓ עשיתי':'סמנו כשסיימתם';d.className='done-btn'+(on?' on':'');st.className=st.className.replace(/ ?is-done/g,'')+(on?' is-done':'');}
+    d.addEventListener('click',function(){done[id]=!done[id];try{localStorage.setItem(DKEY,JSON.stringify(done));}catch(x){}paint();prog();});
+    box.appendChild(d);paint();
+    st.querySelector('.st-text').appendChild(box);
+  })(steps[e]);}
+  prog();
+
+  /* שיתוף בוואטסאפ: הקידוד נבנה בזמן ריצה, כדי שלא יהיו סימני אחוז בקוד */
+  $('shareBtn').addEventListener('click',function(){
+    var msg='ראיתי מדריך חינמי של יואב יושע: Claude עובר על שנה של וואטסאפ ובונה ניתוח אישיות. הארכיטיפ שלך, 5 ממדי אישיות, ואיך את/ה נותן/ת אהבה. חשבתי עלייך/עליך 👇 '+SIGNUP_URL+'?utm_source=share&utm_medium=whatsapp&utm_campaign=mirror';
+    window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+    try{if(window.fbq)fbq('trackCustom','WaShare');}catch(x){}
+  });
+})();
+</script>
+
+<!-- Meta Pixel: Lead נשלח פעם אחת בלבד לכל דפדפן -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1122932667353017');fbq('track','PageView');
+(function(){
+  var k='mirror_lead_sent',sent=false;
+  try{sent=localStorage.getItem(k)==='1';}catch(e){}
+  if(!sent){fbq('track','Lead',{content_name:'mirror'});try{localStorage.setItem(k,'1');}catch(e){}}
+})();
+</script>
+</body>
+</html>

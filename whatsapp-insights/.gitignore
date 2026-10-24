@@ -1,0 +1,5 @@
+# Built outputs. Rebuild with: funnel/build.py (pages to paste), funnel/release.py (the wa-mirror repo copy),
+# scripts/build_ravpage.py (the old tool page).
+dist/
+funnel/dist/
+funnel/release/
