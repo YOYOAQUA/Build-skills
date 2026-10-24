@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מה הוואטסאפ שלך יודע עליך</title>
+<meta name="description" content="כלי חינמי שקורא את הצ׳אטים שלך ומחזיר ציון התאוששות דיגיטלית, הטיפוס שלך, מי מטעין אותך ומי מרוקן. הכל רץ בתוך הדפדפן.">
+<meta property="og:title" content="מה הוואטסאפ שלך יודע עליך">
+<meta property="og:description" content="הרבה יותר ממה שאתה חושב. ציון התאוששות דיגיטלית, הטיפוס שלך, ומי מטעין אותך.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="wai-wrap site-head">
+  <a class="site-mark" href="./">המראה<span>.</span></a>
+  <a class="wai-btn" href="#signup">לבדיקה בחינם</a>
+</header>
+
+<main>
+  <section class="wai-wrap hero">
+    <h1>מה הוואטסאפ שלך <em>יודע עליך</em></h1>
+    <p class="hero__sub">הרבה יותר ממה שאתה חושב. מתי אתה באמת נח, מי מטעין אותך ומי מרוקן, ואיזה משפט אתה חוזר עליו בלי לשים לב.</p>
+    <ul class="hero__proof">
+      <li>חינם</li>
+      <li>שתי דקות</li>
+      <li>השיחות לא עולות לשום שרת</li>
+    </ul>
+    <div><a class="wai-btn wai-btn--primary" href="#signup">אני רוצה לבדוק את שלי</a></div>
+  </section>
+
+  <section class="wai-wrap preview" aria-label="דוגמה לדוח">
+    <span class="preview__label">דוגמה, לא נתונים אמיתיים</span>
+    <div id="demo"></div>
+  </section>
+
+  <section class="wai-wrap block">
+    <h2>מה תגלה על עצמך</h2>
+    <ul class="discover">
+      <li><b>ציון התאוששות דיגיטלית</b><span>כמה הטלפון גוזל לך מהלילות, מהשבת ומהשקט. ציון מ-0 עד 100.</span></li>
+      <li><b>הטיפוס שלך</b><span>מכבה השריפות, הינשוף, המניע, הפרשן, המעודד או הצומח.</span></li>
+      <li><b>מי מטעין ומי מרוקן</b><span>מי שולח לך אנרגיה, ומי בעיקר תלונות ולחץ.</span></li>
+      <li><b>המשפט שחוזר אצלך</b><span>"אין לי זמן", "אני חייב", "אין לי כוח". כמה פעמים, ובאילו הקשרים.</span></li>
+    </ul>
+  </section>
+
+  <section class="wai-wrap block" id="signup">
+    <div class="signup">
+      <h2>קבל את הכלי</h2>
+      <p class="wai-muted">שלוש שאלות קצרות, כדי שהדוח ידבר אליך. הקישור לכלי יגיע גם למייל.</p>
+      <form class="form" id="lead-form" novalidate>
+        <div class="form__row">
+          <div class="field"><label for="lead-name">שם פרטי</label><input id="lead-name" name="name" type="text" autocomplete="given-name" required></div>
+          <div class="field"><label for="lead-email">מייל</label><input id="lead-email" name="email" type="email" autocomplete="email" inputmode="email" dir="ltr" required></div>
+        </div>
+        <fieldset class="field"><legend>מגדר</legend><div class="options">
+          <label><input type="radio" name="gender" value="m" id="g-m" checked> גבר</label>
+          <label><input type="radio" name="gender" value="f" id="g-f"> אישה</label>
+          <label><input type="radio" name="gender" value="x" id="g-x"> מעדיף/ה לא לציין</label>
+        </div></fieldset>
+        <fieldset class="field"><legend>יש לך ילדים?</legend><div class="options">
+          <label><input type="radio" name="kids" value="yes" id="k-yes"> כן</label>
+          <label><input type="radio" name="kids" value="no" id="k-no" checked> לא</label>
+        </div></fieldset>
+        <fieldset class="field"><legend>במה אתה עובד?</legend><div class="options">
+          <label><input type="radio" name="occupation" value="employee" id="o-emp" checked> שכיר/ה</label>
+          <label><input type="radio" name="occupation" value="freelancer" id="o-free"> עצמאי/ת</label>
+          <label><input type="radio" name="occupation" value="founder" id="o-found"> יזם/ית</label>
+          <label><input type="radio" name="occupation" value="other" id="o-other"> אחר</label>
+        </div></fieldset>
+        <label class="consent" for="lead-consent"><input type="checkbox" id="lead-consent" name="consent"> אני מאשר/ת לקבל מיילים עם תוכן ועדכונים. אפשר להסיר בכל רגע.</label>
+        <p class="form__error" id="lead-error" role="alert" hidden></p>
+        <div><button type="submit" class="wai-btn wai-btn--primary">לכלי</button></div>
+      </form>
+      <p class="privacy-note"><b>פרטיות:</b> הצ׳אט נקרא בתוך הדפדפן שלך. ההודעות לא נשלחות לשום שרת, גם לא אלינו. <a href="privacy.html">איך זה עובד</a></p>
+    </div>
+  </section>
+
+  <section class="wai-wrap block">
+    <h2>שתי דרכים לבדוק</h2>
+    <div class="paths">
+      <div class="path">
+        <h3>מהטלפון, בדפדפן</h3>
+        <p>מייצאים 1-3 צ׳אטים מוואטסאפ ומעלים לכלי.</p>
+        <ul><li>עובד באייפון ובאנדרואיד</li><li>ניתוח מיידי, בלי התקנה</li></ul>
+      </div>
+      <div class="path path--pro">
+        <h3>כל הצ׳אטים, עם Claude</h3>
+        <p>יש לך מק עם וואטסאפ דסקטופ ו-Claude Code? הסקיל קורא את כל השיחות בבת אחת ומוסיף ניתוח עומק.</p>
+        <ul><li>כל השיחות מהשנה האחרונה</li><li>אמונות מגבילות, דפוסים, המעגל שלך</li><li>הכל נשאר במחשב שלך</li></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wai-wrap site-foot">
+  <span>זו מראה, לא אבחון.</span>
+  <a href="privacy.html">פרטיות</a>
+  <span>אם קשה לך, ער״ן זמינים 24/7 בטלפון 1201.</span>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/lexicon.js"></script>
+<script src="assets/engine.js"></script>
+<script src="assets/dashboard.js"></script>
+<script src="assets/demo.js"></script>
+<script src="assets/landing.js"></script>
+</body>
+</html>

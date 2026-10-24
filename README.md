@@ -19,3 +19,6 @@
 
 ## Start here
 Run `/content-coach`.
+
+## WhatsApp insights (המראה)
+A free lead magnet: a web tool that analyzes WhatsApp chat exports in the browser, plus the `whatsapp-insights` skill that reads WhatsApp Desktop on a Mac. See `whatsapp-insights/README.md`.

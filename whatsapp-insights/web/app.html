@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>המראה · הכלי</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="wai-wrap site-head">
+  <a class="site-mark" href="./">המראה<span>.</span></a>
+  <button type="button" class="wai-btn" id="show-demo">לראות דוגמה</button>
+</header>
+
+<main class="wai-wrap">
+  <div class="steps" id="steps">
+    <section class="step" id="step-profile">
+      <h2>קצת עליך</h2>
+      <fieldset class="field"><legend>מגדר</legend><div class="options">
+        <label><input type="radio" name="gender" value="m" id="a-g-m" checked> גבר</label>
+        <label><input type="radio" name="gender" value="f" id="a-g-f"> אישה</label>
+        <label><input type="radio" name="gender" value="x" id="a-g-x"> מעדיף/ה לא לציין</label>
+      </div></fieldset>
+      <fieldset class="field"><legend>יש לך ילדים?</legend><div class="options">
+        <label><input type="radio" name="kids" value="yes" id="a-k-yes"> כן</label>
+        <label><input type="radio" name="kids" value="no" id="a-k-no" checked> לא</label>
+      </div></fieldset>
+      <fieldset class="field"><legend>במה אתה עובד?</legend><div class="options">
+        <label><input type="radio" name="occupation" value="employee" id="a-o-emp" checked> שכיר/ה</label>
+        <label><input type="radio" name="occupation" value="freelancer" id="a-o-free"> עצמאי/ת</label>
+        <label><input type="radio" name="occupation" value="founder" id="a-o-found"> יזם/ית</label>
+        <label><input type="radio" name="occupation" value="other" id="a-o-other"> אחר</label>
+      </div></fieldset>
+    </section>
+
+    <section class="step" id="step-export">
+      <h2>מייצאים צ׳אט מוואטסאפ</h2>
+      <p>הכי מעניין: 2-3 צ׳אטים. בן או בת זוג, קבוצת המשפחה, והחבר הכי קרוב.</p>
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-ios" aria-selected="true" aria-controls="howto-ios">אייפון</button>
+        <button type="button" role="tab" id="tab-android" aria-selected="false" aria-controls="howto-android">אנדרואיד</button>
+      </div>
+      <ol class="howto" id="howto-ios" role="tabpanel" aria-labelledby="tab-ios">
+        <li>פותחים את הצ׳אט בוואטסאפ</li>
+        <li>לוחצים על השם של איש הקשר או הקבוצה למעלה</li>
+        <li>גוללים למטה ובוחרים <b>ייצוא צ׳אט</b></li>
+        <li>בוחרים <b>ללא מדיה</b></li>
+        <li>בוחרים <b>שמירה בקבצים</b>, וחוזרים לכאן</li>
+      </ol>
+      <ol class="howto" id="howto-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+        <li>פותחים את הצ׳אט בוואטסאפ</li>
+        <li>לוחצים על שלוש הנקודות למעלה, ואז <b>עוד</b></li>
+        <li>בוחרים <b>ייצוא צ׳אט</b> ואז <b>ללא מדיה</b></li>
+        <li>שומרים את הקובץ במכשיר (או ב-Drive), וחוזרים לכאן</li>
+      </ol>
+      <p class="status">פתחת את זה מתוך אינסטגרם וההעלאה לא עובדת? פותחים את הקישור בדפדפן (שלוש הנקודות למעלה, "פתח בדפדפן").</p>
+    </section>
+
+    <section class="step" id="step-upload">
+      <h2>מעלים את הקבצים</h2>
+      <label class="drop" id="drop" for="file-input">
+        <b>בחירת קבצים</b>
+        <span class="wai-muted">קבצי ZIP או TXT מהייצוא. אפשר כמה ביחד.</span>
+      </label>
+      <input type="file" id="file-input" accept=".txt,.zip,text/plain,application/zip" multiple hidden>
+      <ul class="files" id="file-list"></ul>
+      <p class="privacy-note"><b>פרטיות:</b> הקבצים נקראים בתוך הדפדפן שלך. ההודעות לא נשלחות לשום שרת.</p>
+      <p class="form__error" id="upload-error" role="alert" hidden></p>
+    </section>
+
+    <section class="step" id="step-who" hidden>
+      <h2>מי אתה בצ׳אט?</h2>
+      <p class="wai-muted">בוחרים את השם שלך כמו שהוא מופיע בייצוא.</p>
+      <div class="who options" id="who"></div>
+      <div><button type="button" class="wai-btn wai-btn--primary" id="run">תראה לי מה הוואטסאפ שלי יודע</button></div>
+    </section>
+  </div>
+
+  <div id="report"></div>
+
+  <div class="card-preview" hidden>
+    <p class="wai-muted">הכרטיס שלך. אם ההורדה לא התחילה: לחיצה ארוכה על התמונה ו"שמירה".</p>
+    <img data-wai-card-preview alt="הכרטיס לשיתוף">
+  </div>
+
+  <section class="step" id="pro">
+    <h2>רוצה את כל הצ׳אטים בבת אחת?</h2>
+    <p>יש לך מק עם וואטסאפ דסקטופ ו-Claude Code? הסקיל קורא את כל השיחות מהשנה האחרונה, ישירות מהמחשב, ומוסיף ניתוח עומק: דפוסים, אמונות מגבילות והמעגל שלך. הכל נשאר אצלך.</p>
+    <ol class="howto">
+      <li>מעתיקים את הפקודה ומדביקים בטרמינל:</li>
+    </ol>
+    <div class="copy-row"><pre class="code" id="install-cmd"></pre><button type="button" class="wai-btn" id="copy-install">העתקה</button></div>
+    <ol class="howto" start="2">
+      <li>פותחים Claude Code וכותבים: <b>תנתח את הוואטסאפ שלי</b></li>
+    </ol>
+    <p class="wai-muted">מעדיף להתקין ידנית? <a id="skill-zip" href="#">הורדת הסקיל (ZIP)</a>, ופותחים אותו לתוך התיקייה ‎~/.claude/skills</p>
+  </section>
+</main>
+
+<footer class="wai-wrap site-foot">
+  <span>זו מראה, לא אבחון.</span>
+  <a href="privacy.html">פרטיות</a>
+  <span>אם קשה לך, ער״ן זמינים 24/7 בטלפון 1201.</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<script src="config.js" defer></script>
+<script src="assets/lexicon.js" defer></script>
+<script src="assets/engine.js" defer></script>
+<script src="assets/dashboard.js" defer></script>
+<script src="assets/demo.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body>
+</html>

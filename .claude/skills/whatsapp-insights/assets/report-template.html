@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הדוח שלי · מה הוואטסאפ שלי יודע עליי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=Karantina:wght@400;700&display=swap">
+<!--INLINE_CSS:styles.css-->
+</head>
+<body>
+<header class="wai-wrap site-head">
+  <span class="site-mark">המראה<span>.</span></span>
+  <span class="wai-muted">דוח פרטי. נשמר רק במחשב שלך.</span>
+</header>
+<main class="wai-wrap" id="app"></main>
+<div class="wai-wrap card-preview" hidden>
+  <p class="wai-muted">הכרטיס שלך לשיתוף:</p>
+  <img data-wai-card-preview alt="הכרטיס לשיתוף">
+</div>
+<!--INLINE_JS:config.js-->
+<!--INLINE_JS:lexicon.js-->
+<!--INLINE_JS:engine.js-->
+<!--INLINE_JS:dashboard.js-->
+<script>
+(function () {
+  var DATA = /*__REPORT_DATA__*/null;
+  var AI = /*__AI_INSIGHTS__*/null;
+  var cfg = window.WAI_CONFIG || {};
+  var el = document.getElementById('app');
+  if (!DATA) { el.textContent = 'אין נתונים בדוח.'; return; }
+  WAI.renderDashboard(el, WAI.analyze(DATA, DATA.profile), { ai: AI, siteUrl: cfg.siteUrl, links: cfg.links });
+})();
+</script>
+</body>
+</html>
