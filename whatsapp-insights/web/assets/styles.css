@@ -1,33 +1,36 @@
 /* Layout: a single readout column (max 960px), right-to-left, built like a lab report
-   for your phone life. Ice neutrals for calm, one ember accent for what needs attention. */
+   for your phone life. Yoav's palette: cream and plum, powder blue for data, gold only on buttons.
+   Numbers in Barlow Condensed, everything else in Heebo, like his pages. */
 :root {
-  --bg: #EEF2F4;
-  --surface: #FFFFFF;
-  --ink: #10202C;
-  --muted: #5B6C78;
-  --line: #D6DEE4;
-  --accent: #D24B22;
-  --accent-ink: #FFFFFF;
-  --cold: #2B6F86;
-  --soft: #E3EBEF;
-  --good: #23784A;
-  --warn: #A86A00;
-  --bad: #B8321E;
-  --font-display: "Karantina", "IBM Plex Sans Hebrew", "Arial Narrow", sans-serif;
-  --font-body: "IBM Plex Sans Hebrew", "Heebo", "Segoe UI", Arial, sans-serif;
+  --bg: #F6EAD0;
+  --surface: #FFFAF0;
+  --ink: #352D34;
+  --muted: #6E606C;
+  --line: #E4D4B6;
+  --accent: #4A414A;
+  --accent-ink: #F6EAD0;
+  --cold: #5F7F99;
+  --soft: #F0E2C6;
+  --good: #3F7A57;
+  --warn: #9A6A1E;
+  --bad: #9E3B2F;
+  --btn: #F2B84B;
+  --btn-ink: #352D34;
+  --font-display: "Barlow Condensed", "Heebo", Arial, sans-serif;
+  --font-body: "Heebo", Arial, sans-serif;
   --radius: 14px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0B1620; --surface: #12222E; --ink: #E5EDF2; --muted: #93A6B4; --line: #233847;
-    --accent: #FF7448; --accent-ink: #1A0A04; --cold: #6DB5CE; --soft: #182C3A;
-    --good: #5CC08A; --warn: #E3B04B; --bad: #F06B5B; color-scheme: dark;
+    --bg: #4A414A; --surface: #564A55; --ink: #F6EAD0; --muted: #CDBFB0; --line: #6E626D;
+    --accent: #F6EAD0; --accent-ink: #352D34; --cold: #BFCFDD; --soft: #625661;
+    --good: #9BD3B0; --warn: #EAC88A; --bad: #F0A595; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0B1620; --surface: #12222E; --ink: #E5EDF2; --muted: #93A6B4; --line: #233847;
-  --accent: #FF7448; --accent-ink: #1A0A04; --cold: #6DB5CE; --soft: #182C3A;
-  --good: #5CC08A; --warn: #E3B04B; --bad: #F06B5B; color-scheme: dark;
+  --bg: #4A414A; --surface: #564A55; --ink: #F6EAD0; --muted: #CDBFB0; --line: #6E626D;
+  --accent: #F6EAD0; --accent-ink: #352D34; --cold: #BFCFDD; --soft: #625661;
+  --good: #9BD3B0; --warn: #EAC88A; --bad: #F0A595; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -59,8 +62,8 @@ p { margin: 0; }
   background: var(--surface); color: var(--ink); font: 600 16px var(--font-body); cursor: pointer; text-decoration: none;
 }
 .wai-btn:hover { border-color: var(--ink); }
-.wai-btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.wai-btn--primary:hover { filter: brightness(1.06); border-color: var(--accent); }
+.wai-btn--primary { background: var(--btn); border-color: var(--btn); color: var(--btn-ink); font-weight: 800; }
+.wai-btn--primary:hover { filter: brightness(1.06); border-color: var(--btn); }
 .wai-btn[disabled] { opacity: .6; cursor: wait; }
 .wai-chip {
   display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
@@ -82,7 +85,7 @@ p { margin: 0; }
   border-top: 6px solid var(--accent);
 }
 .wai-hero__main { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.wai-arch { font-family: var(--font-display); font-weight: 700; font-size: clamp(64px, 12vw, 104px); line-height: .9; letter-spacing: .01em; }
+.wai-arch { font-family: var(--font-display); font-weight: 900; font-size: clamp(40px, 8vw, 72px); line-height: 1; letter-spacing: -.02em; }
 .wai-tagline { font-size: 20px; font-weight: 600; }
 .wai-desc { color: var(--muted); max-width: 46ch; }
 .wai-secondary { font-size: 14px; color: var(--muted); }
@@ -98,7 +101,7 @@ p { margin: 0; }
 .wai-hl { grid-column: 1 / -1; list-style: none; margin: 0; padding: 18px 0 0; border-top: 1px solid var(--line);
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .wai-hl li { display: flex; flex-direction: column; min-width: 0; }
-.wai-hl__val { font-family: var(--font-display); font-size: 44px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.wai-hl__val { font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .wai-hl__label { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
 .wai-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -126,7 +129,7 @@ p { margin: 0; }
 
 .wai-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
 .wai-stat { display: flex; flex-direction: column; background: var(--soft); border-radius: 10px; padding: 12px 14px; min-width: 0; }
-.wai-stat__val { font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.wai-stat__val { font-family: var(--font-display); font-size: 34px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .wai-stat__label { font-size: 13px; color: var(--muted); }
 .wai-stat__note { font-size: 12px; color: var(--muted); }
 
@@ -145,7 +148,7 @@ p { margin: 0; }
 
 .wai-card { background: var(--soft); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .wai-card__title { font-weight: 700; }
-.wai-card__val { font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; color: var(--cold); }
+.wai-card__val { font-family: var(--font-display); font-size: 34px; font-weight: 700; line-height: 1.1; color: var(--cold); }
 .wai-card--step { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
 .wai-card--charge .wai-card__title { color: var(--good); }
 .wai-card--drain .wai-card__title { color: var(--bad); }
@@ -175,14 +178,29 @@ p { margin: 0; }
   background: var(--ink); color: var(--bg); border-radius: 12px; padding: 18px 20px;
 }
 .wai-cta p { max-width: 52ch; }
-.wai-cta__title { font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1; }
+.wai-cta__title { font-family: var(--font-display); font-size: 26px; font-weight: 900; line-height: 1.1; }
+
+/* personality: five traits as scales, the year as bars + a mood line */
+.wai-traits { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.wai-trait { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
+.wai-trait:last-child { border-bottom: 0; padding-bottom: 0; }
+.wai-trait__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.wai-trait__head b { font-size: 18px; }
+.wai-scale__cells { display: inline-grid; grid-template-columns: repeat(5, 34px); gap: 4px; direction: rtl; }
+.wai-scale__cell { height: 12px; border-radius: 999px; background: var(--soft); }
+.wai-scale__cell.is-past { background: color-mix(in srgb, var(--cold) 45%, var(--soft)); }
+.wai-scale__cell.is-on { background: var(--accent); }
+.wai-scale__ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.wai-mood { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.wai-mood__dot { fill: var(--accent); }
+.wai-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
 
 .wai-care { background: color-mix(in srgb, var(--cold) 14%, var(--surface)); border: 1px solid var(--cold); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 6px; }
 .wai-foot { color: var(--muted); font-size: 13px; display: grid; gap: 4px; padding-top: 8px; }
 
 /* ---------- pages ---------- */
 .site-head { padding-block: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.site-mark { font-family: var(--font-display); font-weight: 700; font-size: 28px; color: var(--ink); text-decoration: none; line-height: 1; }
+.site-mark { font-family: var(--font-display); font-weight: 900; font-size: 24px; color: var(--ink); text-decoration: none; line-height: 1; }
 .site-mark span { color: var(--accent); }
 .site-foot { padding-block: 32px 48px; color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 20px; border-top: 1px solid var(--line); margin-top: 40px; }
 
@@ -268,7 +286,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   .wai-section { padding: 20px 16px; }
   .wai-grid--chart, .wai-grid--two, .paths, .form__row { grid-template-columns: 1fr; }
   .wai-hl { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  .wai-hl__val { font-size: 34px; }
+  .wai-hl__val { font-size: 26px; }
   .wai-hbars li { grid-template-columns: 96px 1fr 64px; gap: 8px; }
   .wai-score__num { font-size: 84px; }
 }

@@ -66,4 +66,17 @@ test('demo data produces a full report', () => {
   assert.strictEqual(r.highlights.length, 3);
   assert.strictEqual(r.cta.key, 'dad');
   assert.ok(r.language.limiting[0].count > 0);
+  assert.ok(W.ARCHETYPE_KEYS.includes(r.archetype.key));
+  assert.notStrictEqual(r.archetype.secondary.key, r.archetype.key);
+});
+
+test('twelve archetypes, each in both genders', () => {
+  assert.strictEqual(W.ARCHETYPE_KEYS.length, 12);
+  for (const key of W.ARCHETYPE_KEYS) {
+    const m = W.archetypeInfo(key, { gender: 'm' }), f = W.archetypeInfo(key, { gender: 'f' });
+    for (const field of ['name', 'tagline', 'desc', 'shadow', 'step']) assert.ok(m[field] && f[field], key + '.' + field);
+    assert.notStrictEqual(m.name, f.name);
+  }
+  assert.strictEqual(W.archetypeInfo('caregiver', { gender: 'f' }).name, 'המטפלת');
+  assert.strictEqual(W.archetypeInfo('nope', {}), null);
 });

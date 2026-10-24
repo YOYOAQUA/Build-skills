@@ -61,9 +61,10 @@
     var p = r.profile, a = r.archetype, rec = r.recovery;
     var hl = r.highlights.map(function (h) { return '<li><span class="wai-hl__val">' + esc(h.value) + '</span><span class="wai-hl__label">' + esc(h.label) + '</span></li>'; }).join('');
     return '<section class="wai-hero">' +
-      '<div class="wai-hero__main"><p class="wai-eyebrow">' + g(p, 'הטיפוס שלך בוואטסאפ', 'הטיפוס שלך בוואטסאפ') + '</p>' +
+      '<div class="wai-hero__main"><p class="wai-eyebrow">' + g(p, 'הארכיטיפ שלך', 'הארכיטיפ שלך') + '</p>' +
       '<h2 class="wai-arch">' + esc(a.name) + '</h2><p class="wai-tagline">' + esc(a.tagline) + '</p>' +
-      '<p class="wai-desc">' + esc(a.desc) + '</p><p class="wai-secondary">ויש בך גם קצת <b>' + esc(a.secondary.name) + '</b></p></div>' +
+      '<p class="wai-desc">' + esc(a.desc) + '</p>' + evidence(a.evidence) +
+      '<p class="wai-secondary">ויש בך גם הרבה <b>' + esc(a.secondary.name) + '</b></p></div>' +
       '<div class="wai-hero__score"><p class="wai-eyebrow">ציון התאוששות דיגיטלית</p>' +
       '<p class="wai-score"><span class="wai-score__num">' + rec.score + '</span><span class="wai-score__of">/100</span></p>' +
       battery(rec.score, rec.band) + '<span class="wai-chip wai-chip--' + bandClass(rec.band) + '">' + esc(rec.band) + '</span></div>' +
@@ -80,8 +81,8 @@
     ].map(function (d) { return { t: d.t, v: rec.penalties[d.k] }; }).sort(function (a, b) { return b.v - a.v; })
       .map(function (d) { return '<li><span>' + esc(d.t) + '</span><b dir="ltr">' + (d.v ? '-' + Math.round(d.v) : '0') + '</b></li>'; }).join('');
     var body = '<div class="wai-grid wai-grid--chart">' +
-      '<figure class="wai-figure">' + hoursChart(r.rhythm.hours) + '<figcaption>ההודעות שלך לפי שעה. בכתום: שעות הלילה.</figcaption></figure>' +
-      '<figure class="wai-figure">' + weekdayChart(r.rhythm.weekdays) + '<figcaption>לפי יום בשבוע. בכתום: שבת.</figcaption></figure></div>' +
+      '<figure class="wai-figure">' + hoursChart(r.rhythm.hours) + '<figcaption>ההודעות שלך לפי שעה. מודגש: שעות הלילה.</figcaption></figure>' +
+      '<figure class="wai-figure">' + weekdayChart(r.rhythm.weekdays) + '<figcaption>לפי יום בשבוע. מודגש: שבת.</figcaption></figure></div>' +
       '<div class="wai-stats">' +
       stat('מההודעות שלך בלילה', W.pct(rec.nightShare)) +
       stat('לילות בשבוע אחרי חצות', rec.lateDaysPerWeek.toFixed(1)) +
@@ -92,7 +93,7 @@
       'השעה הכי עמוסה שלך: <b>' + (peak < 10 ? '0' : '') + peak + ':00</b>. ' + W.pct(rec.nightShare) + ' מההודעות שלך יוצאות בלילה.', body);
   }
 
-  function circleHTML(r) {
+  function circleHTML(r, ai) {
     var p = r.profile, c = r.circle;
     var rows = c.chats.map(function (ch) {
       var energy = ch.energy ? '<span class="wai-chip wai-chip--' + (ch.energy === 'מטעין' ? 'high' : ch.energy === 'מרוקן' ? 'low' : 'neutral') + '">' + esc(ch.energy) + '</span>' : '';
@@ -111,8 +112,11 @@
     }
     var energy = '<div class="wai-grid wai-grid--two"><div class="wai-card wai-card--charge"><p class="wai-card__title">מי מטעין אותך</p>' + people(c.chargers, 'charge') + '</div>' +
       '<div class="wai-card wai-card--drain"><p class="wai-card__title">מי מרוקן אותך</p>' + people(c.drainers, 'drain') + '</div></div>';
+    var roles = ai && ai.circle && ai.circle.length ? '<p class="wai-subhead">' + g(p, 'מה כל אחד נותן לך', 'מה כל אחד נותן לך') + '</p><ul class="wai-people">' + ai.circle.map(function (x) {
+      return '<li><b>' + esc(x.name) + '</b><span class="wai-chip wai-chip--neutral">' + esc(x.role) + '</span><span>' + esc(x.why) + '</span></li>';
+    }).join('') + '</ul>' : '';
     return section('circle', 'מעגל', g(p, 'עם מי אתה באמת מדבר', 'עם מי את באמת מדברת'),
-      'את <b>' + W.pct(c.initShare) + '</b> מהשיחות ' + g(p, 'אתה פותח', 'את פותחת') + '. שלחת ' + c.supportGiven + ' הודעות תמיכה וקיבלת ' + c.supportReceived + '.', energy + table);
+      'את <b>' + W.pct(c.initShare) + '</b> מהשיחות ' + g(p, 'אתה פותח', 'את פותחת') + '. שלחת ' + c.supportGiven + ' הודעות תמיכה וקיבלת ' + c.supportReceived + '.', energy + roles + table);
   }
 
   function contentHTML(r) {
@@ -155,30 +159,169 @@
   }
 
   function directionHTML(r, opts) {
-    var link = (opts.links && opts.links[r.cta.key]) || '#';
+    var link = (opts.links && opts.links[r.cta.key]) || '#', lens = opts.ai && opts.ai.lens;
     return section('direction', 'כיוון', r.pattern.title, esc(r.pattern.body),
-      '<div class="wai-grid wai-grid--two"><div class="wai-card"><p class="wai-card__title">הצד השני של המטבע</p><p>' + esc(r.archetype.shadow) + '</p></div>' +
+      (lens && lens.title ? '<div class="wai-card wai-card--ai"><p class="wai-card__title">' + esc(lens.title) + '</p><p>' + esc(lens.body) + '</p></div>' : '') +
+      '<div class="wai-grid wai-grid--two"><div class="wai-card"><p class="wai-card__title">הצד השני של ' + esc(r.archetype.name) + '</p><p>' + esc(r.archetype.shadow) + '</p></div>' +
       '<div class="wai-card wai-card--step"><p class="wai-card__title">צעד אחד לשבוע הקרוב</p><p>' + esc(r.nextStep) + '</p></div></div>' +
       '<aside class="wai-cta"><div><p class="wai-cta__title">' + esc(r.cta.title) + '</p><p>' + esc(r.cta.text) + '</p></div>' +
       '<a class="wai-btn wai-btn--primary" href="' + esc(link) + '" target="_blank" rel="noopener">לפרטים</a></aside>');
   }
 
-  function aiHTML(ai, r) {
-    if (!ai) return '';
-    var p = r.profile, out = '';
-    if (ai.pattern) out += '<div class="wai-card wai-card--ai"><p class="wai-card__title">' + esc(ai.pattern.title) + '</p><p>' + esc(ai.pattern.body) + '</p></div>';
-    if (ai.insights && ai.insights.length) out += '<div class="wai-grid wai-grid--cards">' + ai.insights.map(function (i) {
-      return '<div class="wai-card"><span class="wai-tag">' + esc(i.layer) + '</span><p class="wai-card__title">' + esc(i.title) + '</p><p>' + esc(i.body) + '</p>' + (i.evidence ? '<p class="wai-evidence">' + esc(i.evidence) + '</p>' : '') + '</div>';
-    }).join('') + '</div>';
-    if (ai.limitingBeliefs && ai.limitingBeliefs.length) out += '<p class="wai-subhead">אמונות מגבילות</p><ul class="wai-beliefs">' + ai.limitingBeliefs.map(function (b) {
+  // ---------- personality (Claude's reading in insights.json + the numbers from summary.json) ----------
+
+  var BIG5 = [
+    { key: 'openness', title: 'סקרנות ופתיחות', low: 'מוכר ויציב', high: 'סקרנות וחידוש' },
+    { key: 'conscientiousness', title: 'סדר ואחריות', low: 'ספונטניות', high: 'סדר ואחריות' },
+    { key: 'extraversion', title: 'מוחצנות', low: 'שקט ופנימיות', high: 'חברתיות ויוזמה' },
+    { key: 'agreeableness', title: 'חום והתחשבות', low: 'ישירות', high: 'חום והתחשבות' },
+    { key: 'stability', title: 'יציבות רגשית', low: 'רגישות ותגובתיות', high: 'רוגע ויציבות' }
+  ];
+  var LOVE_LABELS = { words: 'מילים טובות', time: 'זמן ביחד', service: 'עזרה מעשית', gifts: 'מתנות והפתעות', presence: 'מגע ונוכחות' };
+
+  function evidence(e) {
+    if (!e) return '';
+    return '<p class="wai-evidence">' + esc([].concat(e).join(' · ')) + '</p>';
+  }
+  function card(title, body, ev, extra) {
+    return '<div class="wai-card"><p class="wai-card__title">' + esc(title) + '</p>' + (extra || '') + (body ? '<p>' + esc(body) + '</p>' : '') + evidence(ev) + '</div>';
+  }
+  function P(opts) { return (opts.summary && opts.summary.personality) || null; }
+
+  function scale(score) {
+    var cells = '';
+    for (var i = 1; i <= 5; i++) cells += '<span class="wai-scale__cell' + (i === score ? ' is-on' : i < score ? ' is-past' : '') + '"></span>';
+    return '<span class="wai-scale__cells" role="img" aria-label="' + score + ' מתוך 5">' + cells + '</span>';
+  }
+
+  function bigFiveHTML(ai, r, opts) {
+    if (!ai.bigFive || !ai.bigFive.length) return '';
+    var byKey = {};
+    ai.bigFive.forEach(function (b) { byKey[b.trait] = b; });
+    var rows = BIG5.filter(function (t) { return byKey[t.key]; }).map(function (t) {
+      var b = byKey[t.key], sc = Math.max(1, Math.min(5, Math.round(+b.score || 3)));
+      return '<li class="wai-trait"><div class="wai-trait__head"><b>' + esc(t.title) + '</b>' + scale(sc) + '</div>' +
+        '<div class="wai-scale__ends"><span>' + esc(t.low) + '</span><span>' + esc(t.high) + '</span></div>' +
+        (b.body ? '<p>' + esc(b.body) + '</p>' : '') + evidence(b.evidence) + '</li>';
+    }).join('');
+    var st = P(opts) && P(opts).style, stats = '';
+    if (st) {
+      stats = '<div class="wai-stats">' + stat('מההודעות שלך עם שאלה', W.pct(st.question)) + stat('מילים בהודעה, בממוצע', String(st.avgWords)) +
+        stat('עם אימוג׳י', W.pct(st.emoji)) + stat('עם "אני"', W.pct(st.i)) + stat('עם "אנחנו"', W.pct(st.we)) + '</div>';
+    }
+    return section('personality', 'אישיות', g(r.profile, 'חמשת הממדים שלך', 'חמשת הממדים שלך'),
+      'המודל המחקרי המוכר ביותר לאישיות, כפי שהוא נשמע בהודעות שלך. כל ממד הוא סקאלה, לא תווית.', stats + '<ul class="wai-traits">' + rows + '</ul>');
+  }
+
+  function facesHTML(ai, r) {
+    if (!ai.faces || !ai.faces.length) return '';
+    var cards = ai.faces.map(function (f) {
+      var extra = (f.tone ? '<span class="wai-chip wai-chip--neutral">' + esc(f.tone) + '</span>' : '') + (f.chats ? '<p class="wai-meta">' + esc(f.chats) + '</p>' : '');
+      return card(f.context, f.body, f.evidence, extra);
+    }).join('');
+    return section('faces', 'הפרצופים שלך', g(r.profile, 'אותו אדם, כמה פרצופים', 'אותה אישה, כמה פרצופים'),
+      'איך הטון, האורך והמהירות שלך משתנים מעולם לעולם.', '<div class="wai-grid wai-grid--cards">' + cards + '</div>');
+  }
+
+  function relationshipHTML(ai, r, opts) {
+    var rel = P(opts) && P(opts).relationship, a = ai.relationship, p = r.profile;
+    if (!a && !rel) return '';
+    var stats = rel ? '<div class="wai-stats">' + stat(g(p, 'מהשיחות האישיות אתה פותח', 'מהשיחות האישיות את פותחת'), W.pct(rel.initShare)) +
+      stat(g(p, 'מהשיחות נגמרות במילה שלך', 'מהשיחות נגמרות במילה שלך'), W.pct(rel.lastWordShare)) +
+      stat(g(p, 'פעמים כתבת שוב כשלא ענו לך', 'פעמים כתבת שוב כשלא ענו לך'), String(rel.followUps)) +
+      stat('עונים לך תוך', W.fmtMinutes(rel.theirMedianReplyMin), g(p, 'ואתה עונה תוך ', 'ואת עונה תוך ') + W.fmtMinutes(rel.myMedianReplyMin)) + '</div>' : '';
+    var body = a ? card(a.title || 'הדפוס שלך', a.body, a.evidence) + (a.whenUnanswered ? card('כשלא עונים לך', a.whenUnanswered) : '') : '';
+    return section('relationship', 'סגנון קשר', g(p, 'איך אתה מתקרב ומתרחק', 'איך את מתקרבת ומתרחקת'),
+      'מי יוזם, מי מחכה, ומה קורה כשהצד השני שותק. רק בשיחות אחד על אחד.', stats + '<div class="wai-grid wai-grid--two">' + body + '</div>');
+  }
+
+  function loveHTML(ai, r, opts) {
+    var love = P(opts) && P(opts).love, a = ai.love, p = r.profile;
+    if (!a && !love) return '';
+    var bars = love ? hbars(Object.keys(LOVE_LABELS).map(function (k) {
+      return { label: LOVE_LABELS[k], value: love[k] ? love[k].per1000 : 0, text: (love[k] ? love[k].per1000 : 0) + ' ל-1,000' };
+    })) : '';
+    var body = a ? '<div class="wai-grid wai-grid--two">' + card(g(p, 'איך אתה נותן', 'איך את נותנת'), a.body, a.evidence) +
+      (a.ask ? card(g(p, 'ומה אתה מבקש', 'ומה את מבקשת'), a.ask) : '') + '</div>' : '';
+    return section('love', 'אהבה', g(p, 'איך אתה נותן אהבה', 'איך את נותנת אהבה'),
+      'חמש דרכים לתת אהבה, כמה פעמים מכל 1,000 הודעות אישיות שלך.', bars + body);
+  }
+
+  function valuesHTML(ai, r, opts) {
+    var v = ai.values, topics = P(opts) && P(opts).topics, p = r.profile;
+    if (!v) return '';
+    var tops = (v.top || []).map(function (x) { return card(x.value, x.why, x.evidence); }).join('');
+    var reality = topics ? hbars(Object.keys(topics).filter(function (k) { return k !== 'logistics' && topics[k].share > 0; })
+      .sort(function (a, b) { return topics[b].share - topics[a].share; })
+      .map(function (k) { return { label: topics[k].label, value: topics[k].share, text: W.pct(topics[k].share) }; })) : '';
+    return section('values', 'ערכים', g(p, 'מה חשוב לך, ואיפה אתה באמת נמצא', 'מה חשוב לך, ואיפה את באמת נמצאת'), '',
+      '<div class="wai-grid wai-grid--cards">' + tops + '</div>' +
+      '<p class="wai-subhead">איפה ההודעות שלך באמת הולכות</p>' + reality + (v.reality ? '<p>' + esc(v.reality) + '</p>' : '') +
+      (v.gap ? '<div class="wai-card wai-card--step"><p class="wai-card__title">הפער</p><p>' + esc(v.gap) + '</p></div>' : ''));
+  }
+
+  function innerVoiceHTML(ai, r) {
+    var v = ai.innerVoice, p = r.profile;
+    if (!v) return '';
+    var phrases = r.language.limiting.slice(0, 6).map(function (l) {
+      return '<span class="wai-chip wai-chip--neutral">"' + esc(l.term) + '" · ' + W.times(l.count) + '</span>';
+    }).join(' ');
+    var beliefs = (v.beliefs || []).length ? '<ul class="wai-beliefs">' + v.beliefs.map(function (b) {
       return '<li><b>' + esc(b.belief) + '</b>' + (b.evidence ? '<span class="wai-evidence">' + esc(b.evidence) + '</span>' : '') + (b.reframe ? '<span class="wai-reframe">' + esc(b.reframe) + '</span>' : '') + '</li>';
-    }).join('') + '</ul>';
-    if (ai.circle && ai.circle.length) out += '<p class="wai-subhead">המעגל שלך</p><ul class="wai-people">' + ai.circle.map(function (c) {
-      return '<li><b>' + esc(c.name) + '</b><span class="wai-chip wai-chip--neutral">' + esc(c.role) + '</span><span>' + esc(c.why) + '</span></li>';
-    }).join('') + '</ul>';
-    if (ai.lens) out += '<div class="wai-card"><p class="wai-card__title">' + esc(ai.lens.title) + '</p><p>' + esc(ai.lens.body) + '</p></div>';
-    if (ai.nextStep) out += '<div class="wai-card wai-card--step"><p class="wai-card__title">הצעד שלך</p><p>' + esc(ai.nextStep) + '</p></div>';
-    return section('ai', 'ניתוח עומק', g(p, 'מה Claude ראה בשיחות שלך', 'מה Claude ראה בשיחות שלך'), 'ניתוח של דגימה מההודעות שלך, שנעשה ב-Claude שלך.', out);
+    }).join('') + '</ul>' : '';
+    return section('voice', 'הקול הפנימי', v.tone ? g(p, 'הקול שלך: ', 'הקול שלך: ') + v.tone : g(p, 'איך אתה מדבר אל עצמך', 'איך את מדברת אל עצמך'),
+      esc(v.body || ''), (phrases ? '<p class="wai-subhead">המשפטים שחוזרים</p><p class="wai-chips">' + phrases + '</p>' : '') +
+      (beliefs ? '<p class="wai-subhead">אמונות, ומה אפשר להגיד במקום</p>' + beliefs : ''));
+  }
+
+  function groupsHTML(ai, r, opts) {
+    var roles = ai.groups, list = P(opts) && P(opts).groups, p = r.profile;
+    if (!roles || !roles.length) return '';
+    var cards = roles.map(function (x) { return card(x.role, x.body, x.evidence, x.where ? '<p class="wai-meta">' + esc(x.where) + '</p>' : ''); }).join('');
+    var table = list && list.length ? '<div class="wai-table-wrap"><table class="wai-table"><thead><tr><th scope="col">קבוצה</th><th scope="col">ההודעות שלך</th><th scope="col">' +
+      g(p, 'אתה פותח', 'את פותחת') + '</th><th scope="col">לוגיסטיקה</th><th scope="col">צחוק</th><th scope="col">פרגון</th></tr></thead><tbody>' +
+      list.slice(0, 6).map(function (x) {
+        return '<tr><th scope="row">' + esc(x.name) + '</th><td>' + num(x.mine) + '</td><td>' + W.pct(x.opensShare) + '</td><td>' + W.pct(x.logistics) + '</td><td>' + W.pct(x.laugh) + '</td><td>' + W.pct(x.praise) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '';
+    return section('groups', 'בקבוצות', g(p, 'מה אתה מביא לכל קבוצה', 'מה את מביאה לכל קבוצה'), '', '<div class="wai-grid wai-grid--cards">' + cards + '</div>' + table);
+  }
+
+  var MONTHS = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
+  function monthName(key) { return key ? MONTHS[+key.slice(5, 7) - 1] + ' ' + key.slice(2, 4) : ''; }
+
+  function yearChart(months) {
+    var n = months.length, w = 480 / n, maxMine = Math.max.apply(null, months.map(function (m) { return m.mine; })) || 1;
+    var moods = months.map(function (m) { return m.mood; }), lo = Math.min.apply(null, moods), hi = Math.max.apply(null, moods);
+    var span = hi - lo || 1, bars = '', pts = [], labels = '';
+    months.forEach(function (m, i) {
+      var x = 480 - (i + 1) * w, hgt = Math.max(2, Math.round(m.mine / maxMine * 60));
+      bars += '<rect class="wai-bar" x="' + (x + 3).toFixed(1) + '" y="' + (130 - hgt) + '" width="' + Math.max(2, w - 6).toFixed(1) + '" height="' + hgt + '" rx="2"><title>' + monthName(m.month) + ' · ' + m.mine + ' הודעות</title></rect>';
+      pts.push((x + w / 2).toFixed(1) + ',' + (20 + (1 - (m.mood - lo) / span) * 70).toFixed(1));
+      if (n <= 7 || i % 2 === 0) labels += '<text x="' + (x + w / 2).toFixed(1) + '" y="146" text-anchor="middle">' + monthName(m.month) + '</text>';
+    });
+    var dots = pts.map(function (pt) { var xy = pt.split(','); return '<circle class="wai-mood__dot" cx="' + xy[0] + '" cy="' + xy[1] + '" r="3.5"/>'; }).join('');
+    return '<svg class="wai-chart" viewBox="0 0 480 152" role="img" aria-label="מצב הרוח וכמות ההודעות לפי חודש">' +
+      '<line class="wai-axis" x1="0" x2="480" y1="131" y2="131"/>' + bars + '<polyline class="wai-mood" points="' + pts.join(' ') + '"/>' + dots + labels + '</svg>';
+  }
+
+  function yearHTML(ai, r, opts) {
+    var months = P(opts) && P(opts).monthly, y = ai.yearWave, p = r.profile;
+    if (!y && !(months && months.length > 2)) return '';
+    var chart = months && months.length > 2 ? '<figure class="wai-figure">' + yearChart(months) + '<figcaption>הקו: מצב הרוח בהודעות שלך (מילים טובות פחות מילים קשות). העמודות: כמה כתבת.</figcaption></figure>' : '';
+    var cards = y ? '<div class="wai-grid wai-grid--two">' + (y.high ? card('השיא: ' + monthName(y.high.month), y.high.why) : '') + (y.low ? card('השפל: ' + monthName(y.low.month), y.low.why) : '') + '</div>' : '';
+    return section('year', 'השנה שלך', g(p, 'השנה שלך כגל', 'השנה שלך כגל'), y ? esc(y.body || '') : '', chart + cards);
+  }
+
+  // Claude's archetype replaces the counting guess, in the hero and on the story card.
+  function withArchetype(r, ai) {
+    var a = ai && ai.archetype, info = a && W.archetypeInfo && W.archetypeInfo(a.primary, r.profile);
+    if (!info) return r.archetype;
+    var second = a.secondary && W.archetypeInfo(a.secondary, r.profile);
+    info.tagline = a.tagline || info.tagline;
+    info.desc = a.why || info.desc;
+    info.evidence = a.evidence;
+    info.secondary = second ? { key: second.key, name: second.name } : r.archetype.secondary;
+    return info;
   }
 
   function distressHTML() {
@@ -188,14 +331,20 @@
 
   function render(el, report, opts) {
     opts = opts || {};
-    var r = report, m = r.meta, distress = r.distress || (opts.ai && opts.ai.distress);
+    var r = report, m = r.meta, ai = opts.ai, distress = r.distress || (ai && ai.distress);
+    r.archetype = withArchetype(r, ai);
+    if (ai && ai.pattern) r.pattern = ai.pattern;
+    if (ai && ai.nextStep) r.nextStep = ai.nextStep;
     var meta = '<p class="wai-meta">נותחו ' + num(m.total) + ' הודעות ב-' + m.chats + ' צ׳אטים, ' + heDate(m.from) + ' עד ' + heDate(m.to) + '. ' + num(m.mine) + ' מהן שלך.</p>';
     if (opts.compact) {
       el.innerHTML = '<div class="wai-report wai-report--compact">' + heroHTML(r, opts) + rhythmHTML(r) + '</div>';
       return;
     }
-    el.innerHTML = '<div class="wai-report">' + (distress ? distressHTML() : '') + meta + heroHTML(r, opts) + aiHTML(opts.ai, r) +
-      rhythmHTML(r) + circleHTML(r) + contentHTML(r) + languageHTML(r) + coreHTML(r) + lensHTML(r) + directionHTML(r, opts) +
+    var body = ai
+      ? bigFiveHTML(ai, r, opts) + facesHTML(ai, r) + relationshipHTML(ai, r, opts) + loveHTML(ai, r, opts) + valuesHTML(ai, r, opts) +
+        innerVoiceHTML(ai, r) + groupsHTML(ai, r, opts) + yearHTML(ai, r, opts) + rhythmHTML(r) + circleHTML(r, ai) + directionHTML(r, opts)
+      : rhythmHTML(r) + circleHTML(r) + contentHTML(r) + languageHTML(r) + coreHTML(r) + lensHTML(r) + directionHTML(r, opts);
+    el.innerHTML = '<div class="wai-report">' + (distress ? distressHTML() : '') + meta + heroHTML(r, opts) + body +
       '<footer class="wai-foot"><p>זו מראה, לא אבחון. המספרים נספרים ממילים ושעות, והפרשנות שלך.</p><p>אם קשה לך, ער״ן זמינים 24/7 בטלפון <span class="wai-select">1201</span>.</p></footer></div>';
     el.querySelectorAll('[data-wai]').forEach(function (b) {
       b.addEventListener('click', function () { shareCard(r, opts, b.getAttribute('data-wai'), b); });
@@ -204,54 +353,75 @@
 
   // ---------- story card ----------
 
+  // The card draws with the page's own fonts (the --font-* variables), so a page that swaps fonts swaps them here too.
+  function cardFonts() {
+    var css = typeof getComputedStyle === 'function' ? getComputedStyle(document.documentElement) : null;
+    var pick = function (name, fallback) { return (css && css.getPropertyValue(name).trim()) || fallback; };
+    return {
+      body: pick('--font-body', '"IBM Plex Sans Hebrew", "Heebo", Arial, sans-serif'),
+      disp: pick('--font-display', '"Karantina", "IBM Plex Sans Hebrew", Arial, sans-serif')
+    };
+  }
+
+  // Shrinks the font until the text fits the card's width.
+  function fitFont(x, text, weight, size, family, maxWidth) {
+    x.font = weight + ' ' + size + 'px ' + family;
+    while (size > 40 && x.measureText(text).width > maxWidth) {
+      size -= 6;
+      x.font = weight + ' ' + size + 'px ' + family;
+    }
+  }
+
   function cardCanvas(r, opts) {
     var c = document.createElement('canvas');
     c.width = 1080; c.height = 1920;
     var x = c.getContext('2d');
-    var ink = '#0F1F2B', ice = '#EAF1F5', ember = '#FF7448', muted = '#8FA6B6';
-    x.fillStyle = ink; x.fillRect(0, 0, 1080, 1920);
-    x.fillStyle = ember; x.fillRect(0, 0, 1080, 18);
+    // Yoav's palette: plum background, cream text, powder blue for the quiet parts.
+    var plum = '#4A414A', cream = '#F6EAD0', sky = '#BFCFDD', dim = '#625661';
+    x.fillStyle = plum; x.fillRect(0, 0, 1080, 1920);
+    x.fillStyle = sky; x.fillRect(0, 0, 1080, 18);
     x.direction = 'rtl'; x.textAlign = 'right';
-    var R = 990, body = '"IBM Plex Sans Hebrew", "Heebo", Arial, sans-serif', disp = '"Karantina", "IBM Plex Sans Hebrew", Arial, sans-serif';
-    x.fillStyle = muted; x.font = '500 44px ' + body;
+    var fonts = cardFonts(), R = 990, body = fonts.body, disp = fonts.disp;
+    x.fillStyle = sky; x.font = '500 44px ' + body;
     x.fillText('מה הוואטסאפ שלי יודע עליי', R, 170);
-    x.fillStyle = ice; x.font = '700 230px ' + disp;
+    x.fillStyle = cream; fitFont(x, r.archetype.name, 900, 200, disp, 900);
     x.fillText(r.archetype.name, R, 420);
-    x.font = '400 52px ' + body;
+    fitFont(x, r.archetype.tagline, 400, 52, body, 900);
     x.fillText(r.archetype.tagline, R, 510);
-    x.fillStyle = muted; x.font = '500 44px ' + body;
+    x.fillStyle = sky; x.font = '500 44px ' + body;
     x.fillText('ציון התאוששות דיגיטלית', R, 700);
     x.direction = 'ltr';
-    x.fillStyle = muted; x.font = '700 110px ' + disp;
+    x.fillStyle = sky; x.font = '700 110px ' + disp;
     x.fillText('/100', R, 960);
     var w = x.measureText('/100').width;
-    x.fillStyle = ember; x.font = '700 300px ' + disp;
+    x.fillStyle = cream; x.font = '700 300px ' + disp;
     x.fillText(String(r.recovery.score), R - w - 12, 960);
     x.direction = 'rtl';
     var full = Math.round(r.recovery.score / 10);
     for (var i = 0; i < 10; i++) {
-      x.fillStyle = i < full ? ember : '#24394A';
+      x.fillStyle = i < full ? sky : dim;
       x.fillRect(R - (i + 1) * 90 + 10, 1010, 74, 44);
     }
-    x.strokeStyle = '#24394A'; x.lineWidth = 2;
+    x.strokeStyle = dim; x.lineWidth = 2;
     r.highlights.forEach(function (h, k) {
       var y = 1240 + k * 170;
       x.beginPath(); x.moveTo(90, y - 110); x.lineTo(990, y - 110); x.stroke();
-      x.fillStyle = ice; x.font = '700 120px ' + disp;
+      x.fillStyle = cream; fitFont(x, h.value, 700, 120, disp, 500);
       x.fillText(h.value, R, y);
-      x.fillStyle = muted; x.font = '500 42px ' + body;
+      x.fillStyle = sky; x.font = '500 42px ' + body;
       x.textAlign = 'left'; x.fillText(h.label, 90, y - 20); x.textAlign = 'right';
     });
-    x.fillStyle = ice; x.font = '500 46px ' + body;
+    x.fillStyle = cream; x.font = '500 46px ' + body;
     x.fillText('בדקו מה הוואטסאפ שלכם יודע עליכם', R, 1760);
-    x.fillStyle = ember; x.font = '700 46px ' + body;
+    x.fillStyle = sky; x.font = '700 46px ' + body;
     x.fillText(opts.siteUrl || '', R, 1830);
     return c;
   }
 
   function shareCard(r, opts, mode, btn) {
+    var f = cardFonts();
     var fonts = document.fonts && document.fonts.load ? Promise.all([
-      document.fonts.load('700 230px "Karantina"'), document.fonts.load('500 44px "IBM Plex Sans Hebrew"')
+      document.fonts.load('700 230px ' + f.disp), document.fonts.load('500 44px ' + f.body)
     ]).catch(function () {}) : Promise.resolve();
     var label = btn.textContent;
     btn.disabled = true; btn.textContent = 'מכין את הכרטיס...';

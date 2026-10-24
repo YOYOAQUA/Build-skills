@@ -1,15 +1,15 @@
 /* Everything you may want to change before launch lives here. */
 window.WAI_CONFIG = {
   // Shown at the bottom of the shared story card.
-  siteUrl: 'yoavyosha.co.il',
+  siteUrl: 'yoavyosha.ravpage.co.il/mirror',
 
-  // Where the call-to-action at the end of each report leads, by segment.
-  // TODO: replace with the exact page of each product.
+  // Where the call-to-action at the end of each report leads, by segment (decided 24.10.2026:
+  // every man to the masterclass "גבר בתנועה", women and "other" to Instagram).
   links: {
-    dad: 'https://yoavyosha.co.il',        // אבא + יש ילדים -> האבא מבצעי
-    coaching: 'https://yoavyosha.co.il',   // גבר עצמאי / יזם -> ליווי אישי
-    workshops: 'https://yoavyosha.co.il',  // כל שאר הגברים -> סדנאות גברים
-    general: 'https://yoavyosha.co.il'     // נשים / אחר -> תוכן כללי
+    dad: 'https://yoavyosha.ravpage.co.il/masterclass?utm_source=wa-mirror&utm_medium=report&utm_campaign=dad',
+    coaching: 'https://yoavyosha.ravpage.co.il/masterclass?utm_source=wa-mirror&utm_medium=report&utm_campaign=founder',
+    workshops: 'https://yoavyosha.ravpage.co.il/masterclass?utm_source=wa-mirror&utm_medium=report&utm_campaign=men',
+    general: 'https://www.instagram.com/yoav_yosha/'
   },
 
   // Lead capture. Pick ONE of the two modes below.

@@ -234,54 +234,82 @@
 
   // ---------- archetypes and copy ----------
 
+  // The 12 classic archetypes. Claude picks the primary and secondary in insights.json (with evidence);
+  // the counting fallback below is used only when there are no insights.
+  function A(m, f, tagline, desc, shadow, step) {
+    return { name: [m, f], tagline: tagline, desc: desc, shadow: shadow, step: step };
+  }
   var ARCHETYPES = {
-    firefighter: {
-      name: 'מכבה השריפות',
-      tagline: function (p) { return g(p, 'תמיד זמין, תמיד עונה', 'תמיד זמינה, תמיד עונה'); },
-      desc: function (p) { return g(p, 'אנשים יודעים שעליך אפשר לסמוך. גם הטלפון יודע את זה.', 'אנשים יודעים שעלייך אפשר לסמוך. גם הטלפון יודע את זה.'); },
-      shadow: function () { return 'זמינות כפייתית שוחקת בשקט. כל תשובה תוך 2 דקות היא החלטה שמישהו אחר קיבל בשבילך.'; },
-      step: function (p) { return g(p, 'שבוע אחד: התראות וואטסאפ כבויות בין 21:00 ל-07:00, ושלושה חלונות קבועים ביום שבהם אתה עונה.', 'שבוע אחד: התראות וואטסאפ כבויות בין 21:00 ל-07:00, ושלושה חלונות קבועים ביום שבהם את עונה.'); }
-    },
-    owl: {
-      name: 'הינשוף',
-      tagline: function () { return 'הצ׳אט שלך מתעורר כשכולם הולכים לישון'; },
-      desc: function (p) { return g(p, 'השעות השקטות של הלילה הן השעות הכי פעילות שלך בוואטסאפ.', 'השעות השקטות של הלילה הן השעות הכי פעילות שלך בוואטסאפ.'); },
-      shadow: function () { return 'הלילה הוא הזמן שבו הגוף מתאושש. מסך מואר בחצות קונה עוד שיחה ומשלם עליה בשינה.'; },
-      step: function () { return 'השבוע: עוצר מסכים ב-23:00, הטלפון נטען מחוץ לחדר השינה, ו-5 דקות נשימות לפני השינה.'; }
-    },
-    mover: {
-      name: 'המניע',
-      tagline: function (p) { return g(p, 'אתה זה שמרים את הטלפון ראשון', 'את זאת שמרימה את הטלפון ראשונה'); },
-      desc: function (p) { return g(p, 'יוזם, מתכנן, מזיז. בלעדיך הרבה שיחות פשוט לא היו מתחילות.', 'יוזמת, מתכננת, מזיזה. בלעדייך הרבה שיחות פשוט לא היו מתחילות.'); },
-      shadow: function (p) { return g(p, 'מי שתמיד יוזם מתעייף לבד. שווה לבדוק מי יוזם אליך.', 'מי שתמיד יוזמת מתעייפת לבד. שווה לבדוק מי יוזם אלייך.'); },
-      step: function (p) { return g(p, 'השבוע: תן לאחרים ליזום. תספור מי חוזר אליך בלי שפנית.', 'השבוע: תני לאחרים ליזום. תספרי מי חוזר אלייך בלי שפנית.'); }
-    },
-    commentator: {
-      name: 'הפרשן',
-      tagline: function (p) { return g(p, 'אתה יודע הכל, ומהר', 'את יודעת הכל, ומהר'); },
-      desc: function () { return 'חדשות, פוליטיקה, אקטואליה. הצ׳אט שלך הוא חדר חדשות קטן.'; },
-      shadow: function () { return 'צריכת חדשות כפייתית מעלה סטרס בלי להזיז שום דבר בחיים שלך.'; },
-      step: function () { return 'השבוע: חלון חדשות אחד ביום, 15 דקות, ואז סוגרים.'; }
-    },
-    encourager: {
-      name: 'המעודד',
-      tagline: function (p) { return g(p, 'המילים שלך מרימות אנשים', 'המילים שלך מרימות אנשים'); },
-      desc: function () { return 'תודה, כל הכבוד, אני פה. אנשים יוצאים משיחה איתך עם יותר אנרגיה.'; },
-      shadow: function () { return 'מי מעודד את המעודד? שווה לבדוק כמה תמיכה חוזרת אליך.'; },
-      step: function (p) { return g(p, 'השבוע: בקש עזרה פעם אחת מאחד האנשים שאתה תמיד מעודד.', 'השבוע: בקשי עזרה פעם אחת מאחד האנשים שאת תמיד מעודדת.'); }
-    },
-    grower: {
-      name: 'הצומח',
-      tagline: function () { return 'הצ׳אט שלך מלא תנועה קדימה'; },
-      desc: function () { return 'למידה, רעיונות, פרויקטים. אתה מדבר על מה שאתה בונה.'; },
-      shadow: function () { return 'הרבה רעיונות ומעט סגירות? צמיחה בלי מנוחה נשרפת מהר.'; },
-      step: function (p) { return g(p, 'השבוע: בחר רעיון אחד מהצ׳אט וסגור אותו עד סוף השבוע.', 'השבוע: בחרי רעיון אחד מהצ׳אט וסגרי אותו עד סוף השבוע.'); }
-    }
+    creator: A('היוצר', 'היוצרת',
+      function (p) { return g(p, 'רואה משהו שעוד לא קיים, ובונה אותו', 'רואה משהו שעוד לא קיים, ובונה אותו'); },
+      function (p) { return g(p, 'רעיונות, פרויקטים, "מה אם". השיחות שלך מלאות בדברים שאתה רוצה להביא לעולם.', 'רעיונות, פרויקטים, "מה אם". השיחות שלך מלאות בדברים שאת רוצה להביא לעולם.'); },
+      function () { return 'יותר רעיונות מזמן. חלק מהם נשארים בצ׳אט.'; },
+      function (p) { return g(p, 'השבוע: בחר רעיון אחד מהצ׳אט, ותן לו 30 דקות ביומן.', 'השבוע: בחרי רעיון אחד מהצ׳אט, ותני לו 30 דקות ביומן.'); }),
+    explorer: A('החוקר', 'החוקרת',
+      function () { return 'שואל, מחפש, לא נח במקום'; },
+      function () { return 'שאלות, לינקים, דברים חדשים. הסקרנות היא הדלק שלך.'; },
+      function () { return 'קשה להישאר עם דבר אחד מספיק זמן כדי שיעמיק.'; },
+      function (p) { return g(p, 'השבוע: בחר שאלה אחת שמעסיקה אותך, ותן לה ערב שלם.', 'השבוע: בחרי שאלה אחת שמעסיקה אותך, ותני לה ערב שלם.'); }),
+    caregiver: A('המטפל', 'המטפלת',
+      function (p) { return g(p, 'דואג שלכולם יהיה טוב', 'דואגת שלכולם יהיה טוב'); },
+      function () { return 'תמיכה, "אני פה", "מה שלומך". אנשים יודעים לאן לפנות.'; },
+      function (p) { return g(p, 'נותן הרבה יותר ממה שמבקש. מי מטפל במטפל?', 'נותנת הרבה יותר ממה שמבקשת. מי מטפלת במטפלת?'); },
+      function (p) { return g(p, 'השבוע: בקש עזרה אחת קטנה ממישהו שאתה סומך עליו.', 'השבוע: בקשי עזרה אחת קטנה ממישהו שאת סומכת עליו.'); }),
+    warrior: A('הלוחם', 'הלוחמת',
+      function (p) { return g(p, 'מתמודד, הולך קדימה, לא מוותר', 'מתמודדת, הולכת קדימה, לא מוותרת'); },
+      function (p) { return g(p, 'יעדים, אימונים, "יאללה". אתה ממשיך גם כשקשה.', 'יעדים, אימונים, "יאללה". את ממשיכה גם כשקשה.'); },
+      function () { return 'קשה לנוח בלי להרגיש שמפסידים משהו.'; },
+      function () { return 'השבוע: יום אחד בלי יעד. רק להיות.'; }),
+    leader: A('המנהיג', 'המנהיגה',
+      function (p) { return g(p, 'לוקח אחריות ומזיז דברים', 'לוקחת אחריות ומזיזה דברים'); },
+      function (p) { return g(p, 'אתה פותח שיחות, קובע מועדים וסוגר עניינים. בלעדיך דברים לא קורים.', 'את פותחת שיחות, קובעת מועדים וסוגרת עניינים. בלעדייך דברים לא קורים.'); },
+      function () { return 'כשהכל עליך, קשה לשחרר. וגם קשה שמישהו אחר ייקח.'; },
+      function (p) { return g(p, 'השבוע: העבר משימה אחת למישהו אחר, ואל תבדוק אותה.', 'השבוע: העבירי משימה אחת למישהו אחר, ואל תבדקי אותה.'); }),
+    sage: A('החכם', 'החכמה',
+      function (p) { return g(p, 'מבין לעומק לפני שמגיב', 'מבינה לעומק לפני שמגיבה'); },
+      function () { return 'הסברים, נקודות מבט, עצות. אנשים באים אליך כדי להבין.'; },
+      function () { return 'לפעמים מנתחים במקום להרגיש.'; },
+      function (p) { return g(p, 'השבוע: שאל מישהו קרוב "מה אתה מרגיש?", והקשב בלי לייעץ.', 'השבוע: שאלי מישהו קרוב "מה את מרגישה?", והקשיבי בלי לייעץ.'); }),
+    rebel: A('המורד', 'המורדת',
+      function (p) { return g(p, 'לא מקבל דברים כמו שהם', 'לא מקבלת דברים כמו שהם'); },
+      function (p) { return g(p, 'דעות חזקות, ויכוחים, "זה לא הגיוני". אתה דוחף לשינוי.', 'דעות חזקות, ויכוחים, "זה לא הגיוני". את דוחפת לשינוי.'); },
+      function () { return 'האש שמזיזה את העולם שורפת גם אותך.'; },
+      function (p) { return g(p, 'השבוע: בחר מאבק אחד ששווה את האנרגיה, ושחרר שניים.', 'השבוע: בחרי מאבק אחד ששווה את האנרגיה, ושחררי שניים.'); }),
+    magician: A('הקוסם', 'הקוסמת',
+      function (p) { return g(p, 'הופך חזון למציאות', 'הופכת חזון למציאות'); },
+      function (p) { return g(p, 'חיבורים בין אנשים ורעיונות, "בוא נעשה את זה". אתה רואה אפשרויות שאחרים לא רואים.', 'חיבורים בין אנשים ורעיונות, "בואי נעשה את זה". את רואה אפשרויות שאחרים לא רואים.'); },
+      function () { return 'החזון רץ מהר יותר מהגוף.'; },
+      function (p) { return g(p, 'השבוע: כתוב את החזון במשפט אחד, ושתף אדם אחד.', 'השבוע: כתבי את החזון במשפט אחד, ושתפי אדם אחד.'); }),
+    everyman: A('החבר', 'החברה',
+      function () { return 'שייך, נוכח, תמיד שם'; },
+      function (p) { return g(p, 'הרבה אנשים, הרבה קבוצות, שיחות פשוטות וחמות. אתה הדבק של החבר׳ה.', 'הרבה אנשים, הרבה קבוצות, שיחות פשוטות וחמות. את הדבק של החבר׳ה.'); },
+      function () { return 'קל ללכת לאיבוד בתוך כולם.'; },
+      function () { return 'השבוע: שיחה עמוקה אחת, אחד על אחד.'; }),
+    jester: A('המצחיק', 'המצחיקה',
+      function (p) { return g(p, 'מביא אור לכל שיחה', 'מביאה אור לכל שיחה'); },
+      function () { return 'חחח, אימוג׳ים, בדיחות פנימיות. איתך כולם נושמים.'; },
+      function () { return 'הצחוק יכול להסתיר את מה שבאמת קורה.'; },
+      function (p) { return g(p, 'השבוע: שתף מישהו קרוב במשהו רציני, בלי בדיחה בסוף.', 'השבוע: שתפי מישהו קרוב במשהו רציני, בלי בדיחה בסוף.'); }),
+    lover: A('האוהב', 'האוהבת',
+      function (p) { return g(p, 'חי דרך הקשרים הקרובים', 'חיה דרך הקשרים הקרובים'); },
+      function () { return '"אוהב", "מתגעגע", לבבות. הקרבה היא מה שמניע אותך.'; },
+      function () { return 'כשהקשר רועד, הכל רועד.'; },
+      function () { return 'השבוע: זמן אחד רק לעצמך, בלי טלפון.'; }),
+    innocent: A('התמים', 'התמימה',
+      function (p) { return g(p, 'רואה את הטוב, ומאמין בו', 'רואה את הטוב, ומאמינה בו'); },
+      function (p) { return g(p, 'אופטימיות, תודה, "יהיה טוב". אתה מחזיק את האמונה גם בשביל אחרים.', 'אופטימיות, תודה, "יהיה טוב". את מחזיקה את האמונה גם בשביל אחרים.'); },
+      function () { return 'קשה להודות כשמשהו לא בסדר.'; },
+      function (p) { return g(p, 'השבוע: כתוב דבר אחד שמציק לך, ואמור אותו בקול.', 'השבוע: כתבי דבר אחד שמציק לך, ואמרי אותו בקול.'); })
   };
-  var ARCH_F = { firefighter: 'מכבת השריפות', owl: 'הינשופה', mover: 'המניעה', commentator: 'הפרשנית', encourager: 'המעודדת', grower: 'הצומחת' };
-  var ARCH_GROWER_DESC_F = 'למידה, רעיונות, פרויקטים. את מדברת על מה שאת בונה.';
 
-  function archetypeName(key, p) { return p && p.gender === 'f' ? ARCH_F[key] : ARCHETYPES[key].name; }
+  function archetypeName(key, p) { return ARCHETYPES[key].name[p && p.gender === 'f' ? 1 : 0]; }
+
+  // Everything the report shows about one archetype, in the right gender.
+  function archetypeInfo(key, p) {
+    var a = ARCHETYPES[key];
+    if (!a) return null;
+    return { key: key, name: archetypeName(key, p), tagline: a.tagline(p), desc: a.desc(p), shadow: a.shadow(p), step: a.step(p) };
+  }
 
   function fmtMinutes(min) {
     if (min == null) return '-';
@@ -308,7 +336,7 @@
       'outsideWork', 'kids', 'support', 'mentalLoad'].forEach(function (k) { cat[k] = 0; });
     var limiting = mt.limiting.map(function (l) { return { term: l.term, re: l.re, count: 0, examples: [] }; });
     var distress = false;
-    var deep = 0, logistic = 0;
+    var deep = 0, logistic = 0, qMsgs = 0, laughMsgs = 0;
     var mentalMine = 0, mentalOthers = 0, supportGiven = 0, supportReceived = 0;
     var people = {};
     var firstMine = null, lastMine = null, allFrom = null, allTo = null;
@@ -344,6 +372,8 @@
           }
           if (text) {
             myText++;
+            if (text.indexOf('?') >= 0) qMsgs++;
+            if (JOKE.test(text)) laughMsgs++;
             Object.keys(LEX.topics).forEach(function (k) { if (mt.topics[k].test(text)) cat[k]++; });
             var hitEmotion = false, hitSupport = false, hitMeaning = false;
             Object.keys(cat).forEach(function (k) {
@@ -426,22 +456,26 @@
       .map(function (l) { return { term: l.term, count: l.count, examples: l.examples }; });
 
     // archetype
+    // A rough guess from word counts. Claude's reading in insights.json replaces it.
+    var questions = share(qMsgs, myText), laughs = share(laughMsgs, myText);
     var scores = {
-      firefighter: fastShare * 1.1 + (myMedianReply != null && myMedianReply <= 2 ? 0.2 : 0),
-      owl: nightShare * 3,
-      mover: Math.max(0, initShare - 0.4) * 2 + rates.future * 1.5,
-      commentator: (rates.politics + rates.news) * 5,
-      encourager: (rates.support + rates.gratitude) * 4 + rates.positive,
-      grower: (rates.growth + rates.passion + rates.creativity + rates.meaning) * 3.5
+      creator: rates.creativity * 4 + rates.passion * 2,
+      explorer: rates.growth * 3 + questions * 0.6,
+      caregiver: (rates.support + rates.gratitude) * 4,
+      warrior: rates.health * 3 + rates.future * 1.5,
+      leader: Math.max(0, initShare - 0.4) * 2 + rates.logistics * 1.2,
+      sage: rates.meaning * 4 + rates.growth,
+      rebel: (rates.politics + rates.news + rates.complaints) * 3 + rates.negative,
+      magician: (rates.meaning + rates.creativity + rates.future) * 2,
+      everyman: rates.family + rates.logistics * 0.5,
+      jester: laughs * 3,
+      lover: rates.emotion * 3 + rates.positive * 0.5,
+      innocent: Math.max(0, rates.positive - rates.negative * 2) * 1.5
     };
     var order = Object.keys(scores).sort(function (a, b) { return scores[b] - scores[a]; });
-    var key = order[0], A = ARCHETYPES[key];
-    var archetype = {
-      key: key, name: archetypeName(key, profile), tagline: A.tagline(profile),
-      desc: key === 'grower' && profile.gender === 'f' ? ARCH_GROWER_DESC_F : A.desc(profile),
-      shadow: A.shadow(profile), step: A.step(profile),
-      secondary: { key: order[1], name: archetypeName(order[1], profile) }, scores: scores
-    };
+    var archetype = archetypeInfo(order[0], profile);
+    archetype.secondary = { key: order[1], name: archetypeName(order[1], profile) };
+    archetype.scores = scores;
 
     // the biggest drain on recovery
     var drains = {
@@ -484,10 +518,11 @@
 
     // call to action by segment
     var cta;
-    if (profile.gender !== 'f' && profile.kids) cta = { key: 'dad', title: 'האבא מבצעי', text: 'ראית את המספרים. עכשיו הופכים אותם לנוכחות אמיתית בבית.' };
-    else if (profile.gender !== 'f' && (profile.occupation === 'founder' || profile.occupation === 'freelancer')) cta = { key: 'coaching', title: 'ליווי אישי', text: 'יזם שעונה תוך 2 דקות עובד בשביל הטלפון. בליווי בונים קצב שמחזיק לאורך שנים.' };
-    else if (profile.gender !== 'f') cta = { key: 'workshops', title: 'סדנאות גברים', text: 'חוסן, נשימות, קור. מקום לעבוד על מה שהצ׳אט הראה לך, יחד עם גברים אחרים.' };
-    else cta = { key: 'general', title: 'רוצה עוד כלים כאלה?', text: 'מדי שבוע: כלי אחד לחוסן, אנרגיה וקצב חיים בריא יותר.' };
+    // All the men's segments lead to the masterclass "גבר בתנועה" for now, each with its own angle.
+    if (profile.gender !== 'f' && profile.kids) cta = { key: 'dad', title: 'גבר בתנועה', text: 'ראית את המספרים. מאסטרקלאס לייב לגברים: למצוא משמעות וליצור, ולהיות נוכח באמת, גם בבית.' };
+    else if (profile.gender !== 'f' && (profile.occupation === 'founder' || profile.occupation === 'freelancer')) cta = { key: 'coaching', title: 'גבר בתנועה', text: 'מי שעונה תוך 2 דקות עובד בשביל הטלפון. מאסטרקלאס לייב לגברים: למצוא משמעות וליצור, בקצב שמחזיק.' };
+    else if (profile.gender !== 'f') cta = { key: 'workshops', title: 'גבר בתנועה', text: 'מקום לעבוד על מה שהצ׳אט הראה לך, יחד עם גברים אחרים. מאסטרקלאס לייב: למצוא משמעות וליצור.' };
+    else cta = { key: 'general', title: 'רוצה עוד כלים כאלה?', text: 'באינסטגרם אני משתף כלים לחוסן, לאנרגיה ולקצב חיים בריא יותר.' };
 
     var highlights = [
       { label: 'מההודעות בלילה', value: pct(nightShare) },
@@ -516,7 +551,8 @@
 
   var WAI = {
     parseExport: parseExport, unzipChatText: unzipChatText, guessMe: guessMe, buildData: buildData, analyze: analyze,
-    recoveryFrom: recoveryFrom, fmtMinutes: fmtMinutes, pct: pct, times: times, _buildMatcher: buildMatcher
+    recoveryFrom: recoveryFrom, fmtMinutes: fmtMinutes, pct: pct, times: times, _buildMatcher: buildMatcher,
+    archetypeInfo: archetypeInfo, ARCHETYPE_KEYS: Object.keys(ARCHETYPES)
   };
   root.WAI = Object.assign(root.WAI || {}, WAI);
   if (typeof module !== 'undefined' && module.exports) module.exports = WAI;

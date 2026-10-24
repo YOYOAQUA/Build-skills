@@ -250,6 +250,20 @@ class AnalyzeRules(unittest.TestCase):
             # 100 - min(35, .6667*140) - min(25, .5*50) - min(15, (.6667-1/7)*150) - min(25, 1/max(1,7/7)*6)
             self.assertEqual(s["recoveryScore"], 100 - 35 - 25 - 15 - 6)
 
+            # Two conversations (6h apart), both opened by דני, both ending with the user.
+            rel = s["personality"]["relationship"]
+            self.assertEqual(rel["conversations"], 2)
+            self.assertEqual(rel["initShare"], 0)
+            self.assertEqual(rel["lastWordShare"], 1)
+            self.assertEqual(rel["followUps"], 0)  # 01:00 came 1.5h after 23:31, under the 3h line
+            self.assertEqual(rel["unansweredShare"], 0)
+            months = s["personality"]["monthly"]
+            self.assertEqual([(m["month"], m["mine"]) for m in months], [("2026-10", 3)])
+            self.assertEqual(s["personality"]["style"]["question"], 0)
+            self.assertEqual(set(s["personality"]["love"]), {"words", "time", "service", "gifts", "presence"})
+            self.assertIn("work", s["personality"]["topics"])  # read from the report's lexicon.js
+            self.assertIn("style", s["topChats"][0])
+
             data["chats"][0]["messages"][2]["x"] = "אני לא רוצה לחיות ככה יותר"
             with open(path, "w", encoding="utf-8") as fh:
                 json.dump(data, fh, ensure_ascii=False)
@@ -299,6 +313,16 @@ class Report(unittest.TestCase):
                 html = fh.read()
             self.assertIn("window.I=null;", html)
             self.assertNotIn('"profile"', html)
+
+            # summary.json next to data.json goes into the report when the template asks for it.
+            with open(template, "w", encoding="utf-8") as fh:
+                fh.write("<html><script>window.D=/*__REPORT_DATA__*/null;window.I=/*__AI_INSIGHTS__*/null;window.S=/*__SUMMARY__*/null;</script></html>")
+            with open(os.path.join(tmp, "summary.json"), "w", encoding="utf-8") as fh:
+                json.dump({"recoveryScore": 75}, fh)
+            res = run("build_report.py", data, "--out", out, "--template", template)
+            self.assertEqual(res.returncode, 0, res.stderr)
+            with open(out, encoding="utf-8") as fh:
+                self.assertIn('window.S={"recoveryScore":75};', fh.read())
 
 
 if __name__ == "__main__":

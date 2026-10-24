@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a single self-contained report.html from data.json (+ optional insights.json).
+"""Build a single self-contained report.html from data.json (+ optional insights.json and summary.json).
 
 Inlines the dashboard assets into assets/report-template.html, so the report opens
 offline from disk and nothing is fetched. Python 3.8+ standard library only.
@@ -15,7 +15,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.normpath(os.path.join(HERE, "..", "assets"))
 DATA_MARK = "/*__REPORT_DATA__*/null"
 INSIGHTS_MARK = "/*__AI_INSIGHTS__*/null"
-INSIGHT_KEYS = ["pattern", "insights", "limitingBeliefs", "circle", "lens", "nextStep", "distress"]
+SUMMARY_MARK = "/*__SUMMARY__*/null"
+INSIGHT_KEYS = ["archetype", "bigFive", "faces", "relationship", "love", "values", "innerVoice", "groups",
+                "yearWave", "circle", "pattern", "lens", "nextStep", "distress"]
 OCCUPATIONS = ["employee", "freelancer", "founder", "other"]
 
 
@@ -30,14 +32,15 @@ def js_json(obj):
     return s.replace("</", "<\\/").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
-def render(template, assets_dir, data_js, insights_js):
+def render(template, assets_dir, data_js, insights_js, summary_js="null"):
     """Single pass over the template: inline assets and fill data placeholders.
 
     Inserted content is never rescanned, so message text or asset code that happens to
     contain a marker cannot break the report.
     """
     out, pos, filled = [], 0, set()
-    markers = ("<!--INLINE_CSS:", "<!--INLINE_JS:", DATA_MARK, INSIGHTS_MARK)
+    fills = {DATA_MARK: data_js, INSIGHTS_MARK: insights_js, SUMMARY_MARK: summary_js}
+    markers = ("<!--INLINE_CSS:", "<!--INLINE_JS:") + tuple(fills)
     while True:
         hits = [(template.find(m, pos), m) for m in markers]
         hits = [(i, m) for i, m in hits if i >= 0]
@@ -46,8 +49,8 @@ def render(template, assets_dir, data_js, insights_js):
             break
         start, mark = min(hits)
         out.append(template[pos:start])
-        if mark in (DATA_MARK, INSIGHTS_MARK):
-            out.append(data_js if mark == DATA_MARK else insights_js)
+        if mark in fills:
+            out.append(fills[mark])
             filled.add(mark)
             pos = start + len(mark)
             continue
@@ -75,6 +78,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("data")
     parser.add_argument("--insights", help="insights.json written by Claude")
+    parser.add_argument("--summary", help="summary.json from analyze.py (default: next to data.json, if there)")
     parser.add_argument("--out", default="report.html")
     parser.add_argument("--gender", choices=["m", "f", "x"])
     parser.add_argument("--kids", choices=["yes", "no"])
@@ -110,12 +114,21 @@ def main():
         if missing:
             print("Warning: insights.json is missing keys: " + ", ".join(missing), file=sys.stderr)
 
+    summary = None
+    summary_path = args.summary or os.path.join(os.path.dirname(os.path.abspath(args.data)), "summary.json")
+    if os.path.isfile(summary_path):
+        try:
+            with open(summary_path, encoding="utf-8") as fh:
+                summary = json.load(fh)
+        except (OSError, ValueError) as exc:
+            fail("Cannot read summary.json: {}".format(exc))
+
     if not os.path.isfile(args.template):
         fail("Template not found: " + args.template, 2)
     with open(args.template, encoding="utf-8") as fh:
         template = fh.read()
     assets_dir = args.assets_dir or os.path.dirname(os.path.abspath(args.template))
-    html = render(template, assets_dir, js_json(data), js_json(insights))
+    html = render(template, assets_dir, js_json(data), js_json(insights), js_json(summary))
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as fh:

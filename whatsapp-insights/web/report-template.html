@@ -6,7 +6,7 @@
 <title>הדוח שלי · מה הוואטסאפ שלי יודע עליי</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700&display=swap">
 <!--INLINE_CSS:styles.css-->
 </head>
 <body>
@@ -27,10 +27,11 @@
 (function () {
   var DATA = /*__REPORT_DATA__*/null;
   var AI = /*__AI_INSIGHTS__*/null;
+  var SUMMARY = /*__SUMMARY__*/null;
   var cfg = window.WAI_CONFIG || {};
   var el = document.getElementById('app');
   if (!DATA) { el.textContent = 'אין נתונים בדוח.'; return; }
-  WAI.renderDashboard(el, WAI.analyze(DATA, DATA.profile), { ai: AI, siteUrl: cfg.siteUrl, links: cfg.links });
+  WAI.renderDashboard(el, WAI.analyze(DATA, DATA.profile), { ai: AI, summary: SUMMARY, siteUrl: cfg.siteUrl, links: cfg.links });
 })();
 </script>
 </body>

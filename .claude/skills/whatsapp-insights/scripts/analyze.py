@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Compute rhythm/circle/language stats from data.json and write summary.json + sample.md.
+"""Compute rhythm/circle/language/personality stats from data.json and write summary.json + sample.md.
 
 summary.json holds numbers only (plus up to 3 short quotes per limiting phrase).
 sample.md holds a time-spread sample of the user's own messages with brief context,
 for Claude to read when writing insights.json. Python 3.8+ standard library only.
 """
 import argparse
+import ast
 import datetime as dt
 import json
 import math
@@ -13,6 +14,7 @@ import os
 import re
 import statistics
 import sys
+from collections import defaultdict
 
 HEB = "א-ת"
 NIGHT_START, NIGHT_END = 23, 6
@@ -52,6 +54,69 @@ DISTRESS = [
     re.compile(r"(?<!לא )(?<![{0}])(?:[ושהכלבמ]{{1,2}})?רוצה למות(?![{0}])".format(HEB)),
 ]
 JOKE = re.compile("מצחוק|\U0001F602|\U0001F923|חחח")
+
+# ---------- word lists shared with the report (assets/lexicon.js) ----------
+
+LEXICON_JS = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "lexicon.js"))
+JS_STRING = r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\""
+LEX_LISTS = ["positive", "negative", "gratitude", "emotion", "passion", "meaning", "creativity", "future", "past", "support"]
+
+
+def load_lexicon(path=LEXICON_JS):
+    """Read the word lists out of lexicon.js, so the numbers Claude reads match the report's."""
+    with open(path, encoding="utf-8") as fh:
+        src = fh.read()
+    words = lambda body: [ast.literal_eval(s) for s in re.findall(JS_STRING, body)]
+    lex = {"topics": {}}
+    for key, label, terms in re.findall(r"(\w+):\s*\{\s*label:\s*'([^']*)',\s*terms:\s*\[(.*?)\]", src, re.S):
+        lex["topics"][key] = {"label": label, "terms": words(terms)}
+    for key in LEX_LISTS:
+        found = re.search(r"\b" + key + r":\s*\[(.*?)\]", src, re.S)
+        lex[key] = words(found.group(1)) if found else []
+    return lex
+
+
+def build_matcher(terms):
+    """Same rules as buildMatcher in engine.js: Hebrew with up to 2 prefix letters and any suffix,
+    Hebrew of 2 letters or less as a whole word, English as a whole word, symbols anywhere."""
+    heb_long, heb_short, eng, sym = [], [], [], []
+    for t in terms:
+        if re.search("[א-ת]", t):
+            (heb_short if len(re.sub("[^א-ת]", "", t)) <= 2 else heb_long).append(re.escape(t))
+        elif re.search("[a-zA-Z]", t):
+            eng.append(re.escape(t))
+        else:
+            sym.append(re.escape(t))
+    pre = "(?:^|[^א-ת])[והבלמשכ]{0,2}"
+    parts = []
+    if heb_long:
+        parts.append(pre + "(?:" + "|".join(heb_long) + ")")
+    if heb_short:
+        parts.append(pre + "(?:" + "|".join(heb_short) + ")(?![א-ת])")
+    if eng:
+        parts.append("(?:^|[^a-z])(?:" + "|".join(eng) + ")(?![a-z])")
+    if sym:
+        parts.append("(?:" + "|".join(sym) + ")")
+    return re.compile("|".join(parts), re.I) if parts else re.compile(r"(?!x)x")
+
+
+# ---------- personality signals (counted on the user's own text messages) ----------
+
+EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
+I_WORDS = build_matcher(["אני", "אותי", "ממני", "עליי", "אליי", "בשבילי"])
+WE_WORDS = build_matcher(["אנחנו", "לנו", "שלנו", "אותנו", "ביחד", "בואו"])
+# Five ways of giving love, as they show up in writing.
+LOVE = {
+    "words": ["אוהב אותך", "אוהבת אותך", "גאה בך", "מתגעגע", "מתגעגעת", "אין כמוך", "אין עליך", "נשמה שלי", "יקר שלי", "יקרה שלי",
+              "את מדהימה", "אתה מדהים", "❤", "😍", "🥰", "😘", "💕"],
+    "time": ["ניפגש", "נפגש", "נשב", "נדבר", "נצא", "נתראה", "קפה", "ארוחת", "ביחד", "בוא נ", "בואי נ", "פנוי", "פנויה"],
+    "service": ["אאסוף", "אביא", "אעזור", "אסדר", "אטפל", "אקפיץ", "אסיע", "אדאג", "אבדוק לך", "אני על זה", "אכין", "אשלח לך"],
+    "gifts": ["מתנה", "מתנות", "קניתי לך", "הבאתי לך", "הפתעה", "🎁", "💐"],
+    "presence": ["חיבוק", "מחבק", "מחבקת", "נשיקה", "נשיקות", "אני פה", "אני איתך", "אני לידך", "🤗"],
+}
+PRAISE = ["כל הכבוד", "אלוף", "אלופה", "תותח", "תותחית", "מזל טוב", "גאה", "חזק", "👏", "🙌", "💪"]
+FOLLOW_UP_H = 3  # writing again after 3h of no answer counts as a follow-up
+MIN_MINE_FOR_RELATIONSHIP = 3  # one-on-one chats where the user wrote at least this much
 
 
 def load(path):
@@ -108,9 +173,167 @@ def chat_stats(chat):
     }
 
 
-def summarize(data):
+def my_texts(chat):
+    return [m["x"] for m in chat["messages"] if m["me"] and not m["media"] and m["x"]]
+
+
+def style_of(texts, M, keys=None):
+    """Share of the user's text messages that carry each signal, plus average length."""
+    keys = keys or ["question", "exclaim", "emoji", "laugh", "long", "short", "i", "we"] + LEX_LISTS
+    counts, words = defaultdict(int), 0
+    for x in texts:
+        w = len(x.split())
+        words += w
+        signals = {
+            "question": "?" in x, "exclaim": "!" in x, "emoji": bool(EMOJI.search(x)), "laugh": bool(JOKE.search(x)),
+            "long": w >= 25, "short": w <= 2,
+        }
+        for k in keys:
+            if k in signals:
+                counts[k] += signals[k]
+            elif k == "i":
+                counts[k] += bool(I_WORDS.search(x))
+            elif k == "we":
+                counts[k] += bool(WE_WORDS.search(x))
+            else:
+                counts[k] += bool(M[k].search(x))
+    out = {k: share(counts[k], len(texts)) for k in keys}
+    out["avgWords"] = round(words / len(texts), 1) if texts else 0
+    return out
+
+
+def vocab_diversity(texts, window=50, limit=40000):
+    """Unique words per 50-word window, averaged. Comparable between people, unlike a raw count."""
+    toks = []
+    for x in texts:
+        toks.extend(w.lower() for w in re.findall(r"[א-תa-zA-Z]+", x))
+        if len(toks) >= limit:
+            break
+    if len(toks) < window:
+        return None
+    vals = [len(set(toks[i:i + window])) / window for i in range(0, len(toks) - window + 1, window)]
+    return round(sum(vals) / len(vals), 3)
+
+
+def relationship(chats, per_chat):
+    """How the user behaves one on one: who opens, who has the last word, writing again when unanswered."""
+    sessions = starts_me = last_me = follow = unanswered = them_started = 0
+    mine, theirs = [], []
+    for chat, st in zip(chats, per_chat):
+        msgs, times = chat["messages"], st["times"]
+        # Businesses, bots and one-off senders the user never really talks to would skew who opens and who answers.
+        if chat["type"] != "private" or sum(1 for m in msgs if m["me"]) < MIN_MINE_FOR_RELATIONSHIP:
+            continue
+        mine += st["myReplies"]
+        theirs += st["theirReplies"]
+        convs = []
+        for i, m in enumerate(msgs):
+            gap_h = None if i == 0 else (times[i] - times[i - 1]).total_seconds() / 3600
+            if gap_h is None or gap_h > START_GAP_H:
+                convs.append([])
+            convs[-1].append(m["me"])
+            if m["me"] and i > 0 and msgs[i - 1]["me"] and gap_h is not None and FOLLOW_UP_H <= gap_h <= 72:
+                follow += 1
+        for c in convs:
+            sessions += 1
+            if c[0]:
+                starts_me += 1
+            else:
+                them_started += 1
+                unanswered += not any(c)
+            last_me += c[-1]
+    return {
+        "conversations": sessions,
+        "initShare": share(starts_me, sessions),
+        "lastWordShare": share(last_me, sessions),
+        "followUps": follow,
+        "followUpsPer100": round(100 * follow / sessions, 1) if sessions else 0,
+        "unansweredShare": share(unanswered, them_started),
+        "myMedianReplyMin": median(mine),
+        "theirMedianReplyMin": median(theirs),
+    }
+
+
+def personality(chats, per_chat, lex):
+    """The numbers behind the personality angles in insights.json. All from the user's own messages."""
+    M = {k: build_matcher(lex[k]) for k in LEX_LISTS}
+    T = {k: build_matcher(v["terms"]) for k, v in lex["topics"].items()}
+    texts = [x for c in chats for x in my_texts(c)]
+    private = [x for c in chats if c["type"] == "private" for x in my_texts(c)]
+
+    love_re = {k: build_matcher(v) for k, v in LOVE.items()}
+    love = {k: {"count": sum(1 for x in private if r.search(x))} for k, r in love_re.items()}
+    for v in love.values():
+        v["per1000"] = round(1000 * v["count"] / len(private), 1) if private else 0
+
+    praise, logistics = build_matcher(PRAISE), T.get("logistics")
+    groups = []
+    for chat, st in zip(chats, per_chat):
+        tx = my_texts(chat)
+        if chat["type"] != "group" or len(tx) < 15:
+            continue
+        mine = sum(1 for m in chat["messages"] if m["me"])
+        opened = st["startsByMe"] + st["startsByThem"]
+        groups.append({
+            "name": chat["name"], "mine": mine, "myShare": share(mine, len(chat["messages"])),
+            "opensShare": share(st["startsByMe"], opened),
+            "question": share(sum("?" in x for x in tx), len(tx)),
+            "logistics": share(sum(bool(logistics and logistics.search(x)) for x in tx), len(tx)),
+            "laugh": share(sum(bool(JOKE.search(x)) for x in tx), len(tx)),
+            "praise": share(sum(bool(praise.search(x)) for x in tx), len(tx)),
+            "support": share(sum(bool(M["support"].search(x)) for x in tx), len(tx)),
+            "avgWords": round(sum(len(x.split()) for x in tx) / len(tx), 1),
+        })
+    groups.sort(key=lambda g: -g["mine"])
+
+    months = defaultdict(lambda: {"mine": 0, "night": 0, "texts": [], "chats": set()})
+    for chat, st in zip(chats, per_chat):
+        for m, t in zip(chat["messages"], st["times"]):
+            if not m["me"]:
+                continue
+            b = months[t.strftime("%Y-%m")]
+            b["mine"] += 1
+            b["night"] += t.hour >= NIGHT_START or t.hour < NIGHT_END
+            b["chats"].add(chat["name"])
+            if not m["media"] and m["x"]:
+                b["texts"].append(m["x"])
+    monthly = []
+    for key in sorted(months):
+        b = months[key]
+        pos = share(sum(bool(M["positive"].search(x)) for x in b["texts"]), len(b["texts"]))
+        neg = share(sum(bool(M["negative"].search(x)) for x in b["texts"]), len(b["texts"]))
+        monthly.append({
+            "month": key, "mine": b["mine"], "chats": len(b["chats"]), "nightShare": share(b["night"], b["mine"]),
+            "positive": pos, "negative": neg, "mood": round(pos - neg, 4),
+            "avgWords": round(sum(len(x.split()) for x in b["texts"]) / len(b["texts"]), 1) if b["texts"] else 0,
+        })
+
+    return {
+        "style": style_of(texts, M),
+        "vocabDiversity": vocab_diversity(texts),
+        "topics": {k: {"label": v["label"], "share": share(sum(bool(T[k].search(x)) for x in texts), len(texts))}
+                   for k, v in lex["topics"].items()},
+        "relationship": relationship(chats, per_chat),
+        "love": love,
+        "groups": groups[:10],
+        "monthly": monthly,
+    }
+
+
+def face_of(chat, st, M):
+    """How the user writes in one chat, for the "faces" angle."""
+    tx = my_texts(chat)
+    mine_t = [t for m, t in zip(chat["messages"], st["times"]) if m["me"]]
+    face = style_of(tx, M, ["question", "emoji", "laugh", "long", "positive", "negative"])
+    face["nightShare"] = share(sum(1 for t in mine_t if t.hour >= NIGHT_START or t.hour < NIGHT_END), len(mine_t))
+    return face
+
+
+def summarize(data, lex=None):
     chats = data["chats"]
     per_chat = [chat_stats(c) for c in chats]
+    lex = lex or load_lexicon()
+    face_m = {k: build_matcher(lex[k]) for k in ("positive", "negative")}
 
     my_times, my_text = [], []
     for chat, st in zip(chats, per_chat):
@@ -167,6 +390,7 @@ def summarize(data):
                 "theirMedianReplyMin": median(st["theirReplies"]),
                 "startsByMe": st["startsByMe"],
                 "startsByThem": st["startsByThem"],
+                "style": face_of(chat, st, face_m),
             }
         )
 
@@ -222,6 +446,7 @@ def summarize(data):
         "topChats": top,
         "limitingPhrases": limiting,
         "distressFlag": any(is_distress(x) for x in my_text),
+        "personality": personality(chats, per_chat, lex),
     }
 
 
