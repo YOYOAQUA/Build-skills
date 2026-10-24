@@ -1,15 +1,15 @@
 /* Everything you may want to change before launch lives here. */
 window.WAI_CONFIG = {
   // Shown at the bottom of the shared story card.
-  siteUrl: 'yoav.yosha.co.il',
+  siteUrl: 'yoavyosha.co.il',
 
   // Where the call-to-action at the end of each report leads, by segment.
   // TODO: replace with the exact page of each product.
   links: {
-    dad: 'https://yoav.yosha.co.il',        // אבא + יש ילדים -> האבא מבצעי
-    coaching: 'https://yoav.yosha.co.il',   // גבר עצמאי / יזם -> ליווי אישי
-    workshops: 'https://yoav.yosha.co.il',  // כל שאר הגברים -> סדנאות גברים
-    general: 'https://yoav.yosha.co.il'     // נשים / אחר -> תוכן כללי
+    dad: 'https://yoavyosha.co.il',        // אבא + יש ילדים -> האבא מבצעי
+    coaching: 'https://yoavyosha.co.il',   // גבר עצמאי / יזם -> ליווי אישי
+    workshops: 'https://yoavyosha.co.il',  // כל שאר הגברים -> סדנאות גברים
+    general: 'https://yoavyosha.co.il'     // נשים / אחר -> תוכן כללי
   },
 
   // Lead capture. Pick ONE of the two modes below.
