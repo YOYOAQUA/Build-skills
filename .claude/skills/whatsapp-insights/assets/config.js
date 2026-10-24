@@ -32,6 +32,10 @@ window.WAI_CONFIG = {
   // the visitor continues to the tool.
   leadWebhook: '',
 
+  // If the landing page and form live elsewhere (e.g. a Rav Messer landing page),
+  // put its address here and index.html on this site sends visitors there.
+  landingUrl: '',
+
   // The Claude Code skill download, relative to the site root.
   skillZip: 'downloads/whatsapp-insights-skill.zip'
 };

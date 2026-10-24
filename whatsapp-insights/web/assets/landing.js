@@ -1,6 +1,7 @@
 /* Landing page: live demo preview and the lead form. */
 (function () {
   var cfg = window.WAI_CONFIG || {};
+  if (cfg.landingUrl) { location.replace(cfg.landingUrl + location.search); return; }
   var LABELS = {
     gender: { m: 'גבר', f: 'אישה', x: 'לא צוין' },
     kids: { yes: 'כן', no: 'לא' },
