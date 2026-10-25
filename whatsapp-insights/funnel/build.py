@@ -13,8 +13,9 @@ IMG = Path.home() / "מאסטרקלאס" / "img"
 IMAGES = {"IMG_PORTRAIT": IMG / "portrait_square.webp", "IMG_TALK": IMG / "s_talk.webp"}
 IMG_DIR = ROOT / "pages" / "img"
 
-# The embed id of the Rav Messer form "טופס מראה" (list "קלוד", redirects to /mirror-go). Empty until it exists.
-RAVMESSER_FORM = ""
+# The embed id of the Rav Messer form "נרשמים מראה" (list "מראה", tag "מראה", redirects to /mirror-go).
+# Its own list, not "קלוד": joining "קלוד" fires the zahav welcome automation.
+RAVMESSER_FORM = "ed82c9bbb95abca1a7ff0fc70a0def7e6ADD0607"
 
 
 def data_uri(p):
